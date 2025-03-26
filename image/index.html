@@ -143,6 +143,8 @@
             align-items: center;
             background-color: var(--light-gray);
             overflow: hidden;
+            transition: height 0.3s ease;
+            padding: 0;
         }
 
         .preview-placeholder {
@@ -152,8 +154,9 @@
         }
 
         .preview-container svg {
-            max-width: 100%;
-            max-height: 100%;
+            width: 100%;
+            height: 100%;
+            display: block;
         }
 
         .action-buttons {
@@ -334,14 +337,14 @@
             const statusMessage = document.getElementById('status-message');
 
             // API配置
-            const API_URL = 'https://api.siliconflow.cn/v1/chat/completions';
-            const API_MODEL = 'deepseek-ai/DeepSeek-V3';
+            const API_URL = 'https://api.deepseek.com/v1/chat/completions';
+            const API_MODEL = 'deepseek-chat';
             
             // 需要在实际使用时替换为您的API密钥
-            const API_KEY = 'sk-jnpkrlclnxthjvmwetwajvfuzjsjgiglxpcmlzhgxpwysusr'; 
+            const API_KEY = 'sk-06522deafd8549469ac376734a79e145'; 
 
             // 系统提示词
-            const SYSTEM_PROMPT = '请根据用户输入的内容，做成一个美观的svg卡片，卡片应包含简洁的标题、核心内容摘要，并添加适当的视觉元素。返回完整可用的svg代码。';
+            const SYSTEM_PROMPT = '请根据用户输入的内容，做成一个美观的svg卡片（采用现代简约风格，配色协调），卡片应自动识别并提取核心要素，中文。直接返回完整可用的svg代码。';
 
             // 生成图片
             generateBtn.addEventListener('click', async () => {
@@ -435,11 +438,126 @@
                 // 确保SVG适应容器大小
                 const svgElement = previewContainer.querySelector('svg');
                 if (svgElement) {
+                    // 移除可能的内部padding或margin
+                    svgElement.style.margin = '0';
+                    svgElement.style.padding = '0';
+                    
+                    // 设置SVG填充整个容器
                     svgElement.setAttribute('width', '100%');
                     svgElement.setAttribute('height', '100%');
-                    svgElement.style.maxWidth = '100%';
-                    svgElement.style.maxHeight = '100%';
+                    svgElement.style.display = 'block';
+                    
+                    // 确保viewBox属性正确设置
+                    if (!svgElement.hasAttribute('viewBox') && 
+                        svgElement.hasAttribute('width') && 
+                        svgElement.hasAttribute('height')) {
+                        const width = svgElement.getAttribute('width').replace(/[^0-9]/g, '');
+                        const height = svgElement.getAttribute('height').replace(/[^0-9]/g, '');
+                        if (width && height) {
+                            svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`);
+                        }
+                    }
+                    
+                    // 添加点击预览功能
+                    svgElement.style.cursor = 'pointer';
+                    svgElement.addEventListener('click', openFullScreenPreview);
+                    
+                    // 使用setTimeout确保SVG完全加载后再计算高度
+                    setTimeout(() => {
+                        adjustSvgHeight(svgElement);
+                    }, 100);
+                    
+                    // 添加MutationObserver监听SVG内容变化
+                    const observer = new MutationObserver(() => {
+                        adjustSvgHeight(svgElement);
+                    });
+                    observer.observe(svgElement, { attributes: true, childList: true, subtree: true });
                 }
+            }
+            
+            // 调整SVG高度的辅助函数
+            function adjustSvgHeight(svgElement) {
+                try {
+                    // 使用多种方法获取SVG高度
+                    let svgHeight;
+                    
+                    // 方法1: 使用getBBox()
+                    try {
+                        svgHeight = svgElement.getBBox().height;
+                    } catch (e) {
+                        console.log('getBBox方法失败:', e);
+                    }
+                    
+                    // 方法2: 如果getBBox()失败，使用getBoundingClientRect()
+                    if (!svgHeight || svgHeight <= 0) {
+                        svgHeight = svgElement.getBoundingClientRect().height;
+                    }
+                    
+                    // 方法3: 如果前两种方法都失败，检查viewBox属性
+                    if (!svgHeight || svgHeight <= 0) {
+                        const viewBox = svgElement.getAttribute('viewBox');
+                        if (viewBox) {
+                            const viewBoxValues = viewBox.split(' ');
+                            if (viewBoxValues.length >= 4) {
+                                svgHeight = parseFloat(viewBoxValues[3]);
+                            }
+                        }
+                    }
+                    
+                    // 设置容器高度
+                    if (svgHeight && svgHeight > 0) {
+                        if (svgHeight > 300) {
+                            previewContainer.style.height = `${svgHeight + 40}px`;
+                        } else {
+                            previewContainer.style.height = '300px';
+                        }
+                        console.log('SVG高度已调整为:', svgHeight);
+                    } else {
+                        // 默认高度
+                        previewContainer.style.height = '300px';
+                        console.log('无法获取SVG高度，使用默认高度');
+                    }
+                } catch (error) {
+                    console.error('调整SVG高度时出错:', error);
+                    previewContainer.style.height = '300px';
+                }
+            }
+            
+            // 全屏预览SVG
+            function openFullScreenPreview() {
+                const svgElement = previewContainer.querySelector('svg');
+                if (!svgElement) return;
+                
+                // 创建全屏预览容器
+                const overlay = document.createElement('div');
+                overlay.style.position = 'fixed';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100%';
+                overlay.style.height = '100%';
+                overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                overlay.style.display = 'flex';
+                overlay.style.justifyContent = 'center';
+                overlay.style.alignItems = 'center';
+                overlay.style.zIndex = '1000';
+                overlay.style.cursor = 'pointer';
+                
+                // 克隆SVG元素
+                const svgClone = svgElement.cloneNode(true);
+                svgClone.style.width = '90%';
+                svgClone.style.height = '90%';
+                svgClone.style.backgroundColor = 'white';
+                svgClone.style.borderRadius = '5px';
+                svgClone.style.padding = '0';
+                svgClone.style.display = 'block';
+                
+                overlay.appendChild(svgClone);
+                document.body.appendChild(overlay);
+                
+                // 点击关闭全屏预览
+                overlay.addEventListener('click', () => {
+                    document.body.removeChild(overlay);
+                });
             }
 
             // 下载图片
