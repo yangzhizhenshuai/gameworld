@@ -5,7 +5,7 @@
       "name": "Space Adventure",
       "description": "Embark on an exciting journey through the galaxy, exploring unknown planets and civilizations. Make alien friends, collect rare resources, unlock powerful weapons, and become a legendary space explorer.",
       "image": "img/game1.jpg",
-      "url": "games/game1.html",
+      "url": "games/index.html",
       "category": "adventure",
       "type": "popular"
     },
