@@ -1,0 +1,104 @@
+{
+  "featured": [
+    {
+      "id": "game1",
+      "name": "星际冒险",
+      "description": "踏上一段穿越银河系的惊险旅程，探索未知的行星和文明。结交外星朋友，收集稀有资源，解锁强大武器，成为星际探索家中的传奇。",
+      "image": "img/game1.jpg",
+      "url": "games/game1.html",
+      "category": "adventure"
+    },
+    {
+      "id": "game2",
+      "name": "战场神枪手",
+      "description": "进入激烈的多人在线战场，测试你的射击技巧和战术能力。选择你的武器，组建你的小队，主宰战场。每场战斗都是独特的体验！",
+      "image": "img/game2.jpg",
+      "url": "games/game2.html",
+      "category": "action"
+    },
+    {
+      "id": "game3",
+      "name": "魔法之谜",
+      "description": "在这个引人入胜的益智游戏中施展你的魔法才能，解决复杂的谜题，收集神秘符文。找出失落的魔法书，拯救被诅咒的王国。",
+      "image": "img/game3.jpg",
+      "url": "games/game3.html",
+      "category": "puzzle"
+    },
+    {
+      "id": "game4",
+      "name": "王国征服者",
+      "description": "建立你的王国，训练强大的军队，与其他玩家争夺资源和领土。制定策略，结成联盟，统治整个大陆，成为真正的王者。",
+      "image": "img/game4.jpg",
+      "url": "games/game4.html",
+      "category": "strategy"
+    }
+  ],
+  "popular": [
+    {
+      "id": "game5",
+      "name": "赛车狂热",
+      "description": "体验极速赛车的狂热，驾驶各种豪华跑车穿越全球最具挑战性的赛道。自定义你的车辆，升级性能，赢取锦标赛，成为赛车冠军。",
+      "image": "img/game5.jpg",
+      "url": "games/game5.html",
+      "category": "sports"
+    },
+    {
+      "id": "game6",
+      "name": "城市建设者",
+      "description": "设计和建造你梦想中的城市，规划道路，建设基础设施，满足市民需求。平衡经济发展与环保，创造一个蓬勃发展的大都市。",
+      "image": "img/game6.jpg",
+      "url": "games/game6.html",
+      "category": "casual"
+    },
+    {
+      "id": "game7",
+      "name": "暗影刺客",
+      "description": "在这个隐秘的刺客游戏中，你将在暗影中行动，完成各种秘密任务。使用隐身技能和致命武器，避免被发现，消灭目标。",
+      "image": "img/game7.jpg",
+      "url": "games/game7.html",
+      "category": "action"
+    },
+    {
+      "id": "game8",
+      "name": "怪物猎人",
+      "description": "探索广阔的开放世界，追踪和狩猎各种神秘生物。收集资源，制作装备，提升技能，成为传说中的怪物猎人。",
+      "image": "img/game8.jpg",
+      "url": "games/game8.html",
+      "category": "rpg"
+    }
+  ],
+  "new": [
+    {
+      "id": "game9",
+      "name": "宝石迷阵",
+      "description": "快节奏的益智游戏，匹配相似的宝石创造连击，解锁特殊能力。挑战时间限制，与朋友比拼高分，成为宝石大师。",
+      "image": "img/game9.jpg",
+      "url": "games/game9.html",
+      "category": "puzzle"
+    },
+    {
+      "id": "game10",
+      "name": "农场生活",
+      "description": "经营自己的农场，种植作物，饲养动物，扩展你的农业帝国。与村民交流，参加季节性活动，体验宁静的乡村生活。",
+      "image": "img/game10.jpg",
+      "url": "games/game10.html",
+      "category": "casual"
+    },
+    {
+      "id": "game11",
+      "name": "海盗宝藏",
+      "description": "扬帆起航，踏上寻找传说中宝藏的冒险之旅。探索神秘岛屿，解读古老地图，与其他海盗战斗，寻找隐藏的财富。",
+      "image": "img/game11.jpg",
+      "url": "games/game11.html",
+      "category": "adventure"
+    },
+    {
+      "id": "game12",
+      "name": "龙之传说",
+      "description": "在这款史诗角色扮演游戏中成为英雄，与强大的龙战斗，完成危险任务。选择你的职业，发展技能，改变世界的命运。",
+      "image": "img/game12.jpg",
+      "url": "games/game12.html",
+      "category": "rpg"
+    }
+  ]
+} 

@@ -1,0 +1,352 @@
+/* 基础样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style: none;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 头部导航栏 */
+header {
+    background-color: #2c3e50;
+    color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+}
+
+.logo h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #3498db;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.main-nav {
+    display: flex;
+}
+
+.main-nav li {
+    margin-left: 20px;
+}
+
+.main-nav a {
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.main-nav a:hover,
+.main-nav a.active {
+    background-color: #3498db;
+}
+
+.mobile-menu-btn {
+    display: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* 英雄区域 */
+.hero {
+    padding: 40px 0;
+    background-image: linear-gradient(135deg, #3498db, #8e44ad);
+    color: white;
+}
+
+.search-bar {
+    display: flex;
+    max-width: 600px;
+    margin: 0 auto 30px;
+    border-radius: 50px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 15px 20px;
+    border: none;
+    font-size: 1rem;
+}
+
+.search-bar button {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    padding: 0 25px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.search-bar button:hover {
+    background-color: #27ae60;
+}
+
+.categories {
+    margin-top: 20px;
+}
+
+.categories ul {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.categories li {
+    margin: 5px;
+}
+
+.categories a {
+    display: block;
+    padding: 8px 15px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+}
+
+.categories a:hover,
+.categories a.active {
+    background-color: white;
+    color: #3498db;
+}
+
+/* 主要内容区 */
+main {
+    padding: 40px 0;
+}
+
+main section {
+    margin-bottom: 40px;
+}
+
+main h2 {
+    position: relative;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    color: #2c3e50;
+}
+
+main h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background-color: #3498db;
+}
+
+/* 游戏卡片网格 */
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.game-card {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.game-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.game-info {
+    padding: 15px;
+}
+
+.game-info h3 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: #2c3e50;
+}
+
+.game-info p {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    margin-bottom: 15px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 4.2em;
+}
+
+.play-btn {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #3498db;
+    color: white;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.play-btn:hover {
+    background-color: #2980b9;
+}
+
+/* 页脚 */
+footer {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    padding: 40px 0 20px;
+}
+
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.footer-logo h2 {
+    color: #3498db;
+    margin-bottom: 10px;
+}
+
+.footer-links ul {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.footer-links li {
+    margin-right: 20px;
+    margin-bottom: 10px;
+}
+
+.footer-links a:hover {
+    color: #3498db;
+}
+
+.social-media a {
+    display: inline-block;
+    margin-right: 15px;
+    font-size: 1.5rem;
+    transition: color 0.3s;
+}
+
+.social-media a:hover {
+    color: #3498db;
+}
+
+.copyright {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.9rem;
+    color: #bdc3c7;
+}
+
+/* 响应式设计 */
+@media screen and (max-width: 768px) {
+    .main-nav {
+        display: none;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background-color: #2c3e50;
+        flex-direction: column;
+        padding: 20px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .main-nav.active {
+        display: flex;
+    }
+
+    .main-nav li {
+        margin: 10px 0;
+        text-align: center;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .footer-content > div {
+        width: 100%;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .footer-links ul {
+        justify-content: center;
+    }
+
+    .categories ul {
+        justify-content: center;
+    }
+
+    .games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .search-bar {
+        flex-direction: column;
+        border-radius: 8px;
+    }
+
+    .search-bar input {
+        width: 100%;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .search-bar button {
+        width: 100%;
+        padding: 10px;
+        border-radius: 0 0 8px 8px;
+    }
+
+    .games-grid {
+        grid-template-columns: 1fr;
+    }
+} 
