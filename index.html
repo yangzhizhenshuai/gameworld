@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏聚合网站 - 探索无限游戏世界</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>GameHub</h1>
+            </div>
+            <nav>
+                <ul class="main-nav">
+                    <li><a href="#" class="active">首页</a></li>
+                    <li><a href="#">热门游戏</a></li>
+                    <li><a href="#">新品推荐</a></li>
+                    <li><a href="#">游戏合集</a></li>
+                    <li><a href="#">关于我们</a></li>
+                </ul>
+                <div class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="search-bar">
+                <input type="text" placeholder="搜索你喜欢的游戏...">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="categories">
+                <ul>
+                    <li><a href="#" data-category="all" class="active">全部</a></li>
+                    <li><a href="#" data-category="action">动作</a></li>
+                    <li><a href="#" data-category="adventure">冒险</a></li>
+                    <li><a href="#" data-category="puzzle">益智</a></li>
+                    <li><a href="#" data-category="rpg">角色扮演</a></li>
+                    <li><a href="#" data-category="strategy">策略</a></li>
+                    <li><a href="#" data-category="sports">体育</a></li>
+                    <li><a href="#" data-category="casual">休闲</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <main>
+        <div class="container">
+            <section class="featured-games">
+                <h2>精选游戏</h2>
+                <div class="games-grid" id="featured-games-container">
+                    <!-- 游戏卡片将通过JavaScript动态加载 -->
+                </div>
+            </section>
+
+            <section class="popular-games">
+                <h2>热门游戏</h2>
+                <div class="games-grid" id="popular-games-container">
+                    <!-- 游戏卡片将通过JavaScript动态加载 -->
+                </div>
+            </section>
+
+            <section class="new-games">
+                <h2>最新游戏</h2>
+                <div class="games-grid" id="new-games-container">
+                    <!-- 游戏卡片将通过JavaScript动态加载 -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>GameHub</h2>
+                    <p>探索无限游戏世界</p>
+                </div>
+                <div class="footer-links">
+                    <ul>
+                        <li><a href="#">关于我们</a></li>
+                        <li><a href="#">联系我们</a></li>
+                        <li><a href="#">使用条款</a></li>
+                        <li><a href="#">隐私政策</a></li>
+                    </ul>
+                </div>
+                <div class="social-media">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 GameHub. 保留所有权利。</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/games.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html> 
