@@ -1,44 +1,42 @@
 /**
- * 主要JavaScript文件，负责页面初始化和事件处理
+ * Main JavaScript file responsible for page initialization and event handling
  */
 document.addEventListener('DOMContentLoaded', async () => {
-    // 初始化页面
+    // Initialize the page
     await initPage();
     
-    // 设置事件监听器
+    // Set up event listeners
     setupEventListeners();
 });
 
 /**
- * 页面初始化
+ * Page initialization
  */
 async function initPage() {
-    // 加载游戏数据
+    // Load game data
     await gameManager.fetchGames();
     
     if (!gameManager.gamesData) {
-        showErrorMessage('无法加载游戏数据，请刷新页面重试。');
+        showErrorMessage('Unable to load game data. Please refresh the page and try again.');
         return;
     }
     
-    // 获取游戏容器
-    const featuredContainer = document.getElementById('featured-games-container');
+    // Get game containers
     const popularContainer = document.getElementById('popular-games-container');
     const newContainer = document.getElementById('new-games-container');
     
-    // 渲染游戏卡片
-    gameManager.renderGames(gameManager.gamesData.featured, featuredContainer);
-    gameManager.renderGames(gameManager.gamesData.popular, popularContainer);
-    gameManager.renderGames(gameManager.gamesData.new, newContainer);
+    // Render game cards
+    gameManager.renderGames(gameManager.popularGames, popularContainer);
+    gameManager.renderGames(gameManager.newGames, newContainer);
     
-    console.log('页面初始化完成');
+    console.log('Page initialization complete');
 }
 
 /**
- * 设置事件监听器
+ * Setup event listeners
  */
 function setupEventListeners() {
-    // 导航栏移动端菜单切换
+    // Mobile menu toggle for navigation bar
     const menuBtn = document.querySelector('.mobile-menu-btn');
     const mainNav = document.querySelector('.main-nav');
     
@@ -48,7 +46,7 @@ function setupEventListeners() {
         });
     }
     
-    // 搜索功能
+    // Search functionality
     const searchForm = document.querySelector('.search-bar');
     const searchInput = document.querySelector('.search-bar input');
     
@@ -59,7 +57,7 @@ function setupEventListeners() {
             handleSearch(searchTerm);
         });
         
-        // 实时搜索（可选）
+        // Live search (optional)
         searchInput.addEventListener('input', debounce(() => {
             const searchTerm = searchInput.value.trim();
             if (searchTerm.length >= 2 || searchTerm === '') {
@@ -68,18 +66,18 @@ function setupEventListeners() {
         }, 500));
     }
     
-    // 分类筛选
+    // Category filtering
     const categoryLinks = document.querySelectorAll('.categories a');
     
     categoryLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             
-            // 更新active类
+            // Update active class
             categoryLinks.forEach(l => l.classList.remove('active'));
             link.classList.add('active');
             
-            // 获取分类并筛选
+            // Get category and filter
             const category = link.getAttribute('data-category');
             filterGamesByCategory(category);
         });
@@ -87,24 +85,19 @@ function setupEventListeners() {
 }
 
 /**
- * 处理搜索功能
- * @param {string} searchTerm - 搜索关键词
+ * Handle search functionality
+ * @param {string} searchTerm - Search keyword
  */
 function handleSearch(searchTerm) {
-    // 获取所有游戏容器
-    const allContainers = document.querySelectorAll('.games-grid');
-    
-    // 如果搜索词为空，恢复默认显示
+    // If search term is empty, restore default display
     if (!searchTerm) {
-        document.getElementById('featured-games-container').innerHTML = '';
         document.getElementById('popular-games-container').innerHTML = '';
         document.getElementById('new-games-container').innerHTML = '';
         
-        gameManager.renderGames(gameManager.gamesData.featured, document.getElementById('featured-games-container'));
-        gameManager.renderGames(gameManager.gamesData.popular, document.getElementById('popular-games-container'));
-        gameManager.renderGames(gameManager.gamesData.new, document.getElementById('new-games-container'));
+        gameManager.renderGames(gameManager.popularGames, document.getElementById('popular-games-container'));
+        gameManager.renderGames(gameManager.newGames, document.getElementById('new-games-container'));
         
-        // 显示所有部分
+        // Show all sections
         document.querySelectorAll('main section').forEach(section => {
             section.style.display = 'block';
         });
@@ -112,15 +105,15 @@ function handleSearch(searchTerm) {
         return;
     }
     
-    // 搜索游戏
+    // Search games
     const searchResults = gameManager.searchGames(searchTerm);
     
-    // 隐藏所有部分
+    // Hide all sections
     document.querySelectorAll('main section').forEach(section => {
         section.style.display = 'none';
     });
     
-    // 创建搜索结果部分（如果不存在）
+    // Create search results section (if it doesn't exist)
     let searchSection = document.getElementById('search-results');
     let searchContainer = document.getElementById('search-results-container');
     
@@ -130,7 +123,7 @@ function handleSearch(searchTerm) {
         searchSection.id = 'search-results';
         
         const h2 = document.createElement('h2');
-        h2.textContent = '搜索结果';
+        h2.textContent = 'Search Results';
         
         searchContainer = document.createElement('div');
         searchContainer.className = 'games-grid';
@@ -143,37 +136,35 @@ function handleSearch(searchTerm) {
         searchSection.style.display = 'block';
     }
     
-    // 渲染搜索结果
+    // Render search results
     gameManager.renderGames(searchResults, searchContainer);
     
-    // 更新搜索结果标题
+    // Update search results title
     const h2 = searchSection.querySelector('h2');
-    h2.textContent = `搜索结果: ${searchResults.length} 个游戏`;
+    h2.textContent = `Search Results: ${searchResults.length} games`;
 }
 
 /**
- * 根据分类筛选游戏
- * @param {string} category - 游戏分类
+ * Filter games by category
+ * @param {string} category - Game category
  */
 function filterGamesByCategory(category) {
     if (category === 'all') {
-        // 恢复默认显示
-        document.getElementById('featured-games-container').innerHTML = '';
+        // Restore default display
         document.getElementById('popular-games-container').innerHTML = '';
         document.getElementById('new-games-container').innerHTML = '';
         
-        gameManager.renderGames(gameManager.gamesData.featured, document.getElementById('featured-games-container'));
-        gameManager.renderGames(gameManager.gamesData.popular, document.getElementById('popular-games-container'));
-        gameManager.renderGames(gameManager.gamesData.new, document.getElementById('new-games-container'));
+        gameManager.renderGames(gameManager.popularGames, document.getElementById('popular-games-container'));
+        gameManager.renderGames(gameManager.newGames, document.getElementById('new-games-container'));
         
-        // 显示所有部分
+        // Show all sections
         document.querySelectorAll('main section').forEach(section => {
             if (section.id !== 'search-results') {
                 section.style.display = 'block';
             }
         });
         
-        // 隐藏搜索结果部分
+        // Hide search results section
         const searchSection = document.getElementById('search-results');
         if (searchSection) {
             searchSection.style.display = 'none';
@@ -182,15 +173,15 @@ function filterGamesByCategory(category) {
         return;
     }
     
-    // 筛选游戏
+    // Filter games
     const filteredGames = gameManager.filterGamesByCategory(category);
     
-    // 隐藏所有部分
+    // Hide all sections
     document.querySelectorAll('main section').forEach(section => {
         section.style.display = 'none';
     });
     
-    // 创建分类结果部分（如果不存在）
+    // Create category results section (if it doesn't exist)
     let categorySection = document.getElementById('category-results');
     let categoryContainer = document.getElementById('category-results-container');
     
@@ -212,39 +203,39 @@ function filterGamesByCategory(category) {
         categorySection.style.display = 'block';
     }
     
-    // 获取分类中文名
+    // Get category name
     const categoryName = getCategoryName(category);
     
-    // 更新分类结果标题
+    // Update category results title
     const h2 = categorySection.querySelector('h2');
-    h2.textContent = `${categoryName} 游戏 (${filteredGames.length})`;
+    h2.textContent = `${categoryName} Games (${filteredGames.length})`;
     
-    // 渲染筛选结果
+    // Render filtered results
     gameManager.renderGames(filteredGames, categoryContainer);
 }
 
 /**
- * 获取分类的中文名称
- * @param {string} category - 分类英文名
- * @returns {string} 分类中文名
+ * Get category name
+ * @param {string} category - Category in English
+ * @returns {string} Category display name
  */
 function getCategoryName(category) {
     const categories = {
-        'action': '动作',
-        'adventure': '冒险',
-        'puzzle': '益智',
-        'rpg': '角色扮演',
-        'strategy': '策略',
-        'sports': '体育',
-        'casual': '休闲'
+        'action': 'Action',
+        'adventure': 'Adventure',
+        'puzzle': 'Puzzle',
+        'rpg': 'RPG',
+        'strategy': 'Strategy',
+        'sports': 'Sports',
+        'casual': 'Casual'
     };
     
     return categories[category] || category;
 }
 
 /**
- * 显示错误消息
- * @param {string} message - 错误消息
+ * Show error message
+ * @param {string} message - Error message
  */
 function showErrorMessage(message) {
     const errorDiv = document.createElement('div');
@@ -266,10 +257,10 @@ function showErrorMessage(message) {
 }
 
 /**
- * 防抖函数
- * @param {Function} func - 要执行的函数
- * @param {number} wait - 等待时间（毫秒）
- * @returns {Function} 防抖处理后的函数
+ * Debounce function
+ * @param {Function} func - Function to execute
+ * @param {number} wait - Wait time (milliseconds)
+ * @returns {Function} Debounced function
  */
 function debounce(func, wait) {
     let timeout;

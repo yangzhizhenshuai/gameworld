@@ -1,41 +1,43 @@
 /**
- * 游戏数据管理
+ * Game Data Management
  */
 class GameManager {
     constructor() {
         this.gamesData = null;
         this.allGames = [];
+        this.popularGames = [];
+        this.newGames = [];
     }
 
     /**
-     * 获取所有游戏数据
+     * Fetch all game data
      */
     async fetchGames() {
         try {
             const response = await fetch('data/games.json');
             if (!response.ok) {
-                throw new Error('无法加载游戏数据');
+                throw new Error('Failed to load game data');
             }
             this.gamesData = await response.json();
             
-            // 合并所有游戏到一个数组
-            this.allGames = [
-                ...this.gamesData.featured,
-                ...this.gamesData.popular,
-                ...this.gamesData.new
-            ];
+            // Store all games
+            this.allGames = this.gamesData.games;
+            
+            // Filter games by type
+            this.popularGames = this.allGames.filter(game => game.type === 'popular');
+            this.newGames = this.allGames.filter(game => game.type === 'new');
             
             return this.gamesData;
         } catch (error) {
-            console.error('获取游戏数据失败:', error);
+            console.error('Error fetching game data:', error);
             return null;
         }
     }
 
     /**
-     * 根据类别筛选游戏
-     * @param {string} category - 游戏类别
-     * @returns {Array} 筛选后的游戏列表
+     * Filter games by category
+     * @param {string} category - Game category
+     * @returns {Array} Filtered game list
      */
     filterGamesByCategory(category) {
         if (category === 'all') {
@@ -45,9 +47,9 @@ class GameManager {
     }
 
     /**
-     * 根据关键词搜索游戏
-     * @param {string} keyword - 搜索关键词
-     * @returns {Array} 搜索结果
+     * Search games by keyword
+     * @param {string} keyword - Search keyword
+     * @returns {Array} Search results
      */
     searchGames(keyword) {
         if (!keyword.trim()) return this.allGames;
@@ -60,27 +62,27 @@ class GameManager {
     }
 
     /**
-     * 创建游戏卡片HTML
-     * @param {Object} game - 游戏数据
-     * @returns {string} 游戏卡片HTML
+     * Create game card HTML
+     * @param {Object} game - Game data
+     * @returns {string} Game card HTML
      */
     createGameCardHTML(game) {
         return `
-            <div class="game-card" data-id="${game.id}" data-category="${game.category}">
+            <div class="game-card" data-id="${game.id}" data-category="${game.category}" data-type="${game.type}">
                 <img src="${game.image}" alt="${game.name}" class="game-image">
                 <div class="game-info">
                     <h3>${game.name}</h3>
                     <p>${game.description}</p>
-                    <a href="${game.url}" class="play-btn">立即开玩</a>
+                    <a href="${game.url}" class="play-btn">Play Now</a>
                 </div>
             </div>
         `;
     }
 
     /**
-     * 渲染游戏卡片到指定容器
-     * @param {Array} games - 游戏数据数组
-     * @param {HTMLElement} container - 目标容器
+     * Render game cards to specified container
+     * @param {Array} games - Game data array
+     * @param {HTMLElement} container - Target container
      */
     renderGames(games, container) {
         if (!container) return;
@@ -88,7 +90,7 @@ class GameManager {
         container.innerHTML = '';
         
         if (games.length === 0) {
-            container.innerHTML = '<p class="no-games">没有找到符合条件的游戏</p>';
+            container.innerHTML = '<p class="no-games">No games found matching your criteria</p>';
             return;
         }
         
@@ -98,5 +100,5 @@ class GameManager {
     }
 }
 
-// 导出游戏管理器实例
+// Export game manager instance
 const gameManager = new GameManager(); 
