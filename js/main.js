@@ -30,6 +30,8 @@ async function initPage() {
     gameManager.renderGames(gameManager.newGames, newContainer);
     
     console.log('Page initialization complete');
+    console.log('Popular games:', gameManager.popularGames.length);
+    console.log('New games:', gameManager.newGames.length);
 }
 
 /**

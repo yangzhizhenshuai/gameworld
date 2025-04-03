@@ -18,16 +18,31 @@ class GameManager {
             if (!response.ok) {
                 throw new Error('Failed to load game data');
             }
-            this.gamesData = await response.json();
+            
+            const data = await response.json();
+            this.gamesData = data;
+            
+            // Log raw data for debugging
+            console.log('Raw game data:', data);
+            
+            // Check if games property exists
+            if (!data.games || !Array.isArray(data.games)) {
+                console.error('Invalid game data format. Expected games array.');
+                return null;
+            }
             
             // Store all games
-            this.allGames = this.gamesData.games;
+            this.allGames = data.games;
+            console.log('All games loaded:', this.allGames.length);
             
             // Filter games by type
             this.popularGames = this.allGames.filter(game => game.type === 'popular');
             this.newGames = this.allGames.filter(game => game.type === 'new');
             
-            return this.gamesData;
+            console.log('Popular games:', this.popularGames.length);
+            console.log('New games:', this.newGames.length);
+            
+            return data;
         } catch (error) {
             console.error('Error fetching game data:', error);
             return null;
@@ -85,14 +100,19 @@ class GameManager {
      * @param {HTMLElement} container - Target container
      */
     renderGames(games, container) {
-        if (!container) return;
+        if (!container) {
+            console.error('Container element not found');
+            return;
+        }
         
         container.innerHTML = '';
         
-        if (games.length === 0) {
+        if (!games || games.length === 0) {
             container.innerHTML = '<p class="no-games">No games found matching your criteria</p>';
             return;
         }
+        
+        console.log(`Rendering ${games.length} games to ${container.id}`);
         
         games.forEach(game => {
             container.innerHTML += this.createGameCardHTML(game);
