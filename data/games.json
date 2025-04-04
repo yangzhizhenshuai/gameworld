@@ -11,8 +11,8 @@
     },
     {
       "id": "game2",
-      "name": "Battlefield Sharpshooter",
-      "description": "Enter intense multiplayer battlefields to test your shooting skills and tactical abilities. Choose your weapons, build your squad, and dominate the battlefield. Every battle is a unique experience!",
+      "name": "Cobra Shooter",
+      "description": "Dive into the intense FPS action of Cobra Shooter! Customize your character, master various weapons, and dominate multiple game modes in this thrilling shooter.",
       "image": "img/game2.jpg",
       "url": "games/game2.html",
       "category": "action",
