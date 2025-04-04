@@ -2,10 +2,10 @@
   "games": [
     {
       "id": "game1",
-      "name": "Space Adventure",
-      "description": "Embark on an exciting journey through the galaxy, exploring unknown planets and civilizations. Make alien friends, collect rare resources, unlock powerful weapons, and become a legendary space explorer.",
+      "name": "Monster Survivors",
+      "description": "Survive endless waves of monsters in this action-packed adventure game!",
       "image": "img/game1.jpg",
-      "url": "games/index.html",
+      "url": "games/game1.html",
       "category": "adventure",
       "type": "popular"
     },
