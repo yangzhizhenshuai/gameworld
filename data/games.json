@@ -12,7 +12,7 @@
     {
       "id": "game2",
       "name": "Cobra Shooter",
-      "description": "Dive into the intense FPS action of Cobra Shooter! Customize your character, master various weapons, and dominate multiple game modes in this thrilling shooter.",
+      "description": "Dive into the intense FPS action of Cobra Shooter! ",
       "image": "img/game2.jpg",
       "url": "games/game2.html",
       "category": "action",
@@ -20,8 +20,8 @@
     },
     {
       "id": "game3",
-      "name": "Magic Puzzles",
-      "description": "Exercise your magical talents in this engaging puzzle game, solve complex riddles, and collect mysterious runes. Find the lost spellbook and save the cursed kingdom.",
+      "name": "Survival Karts",
+      "description": "FRace to survive! Survival Karts –a frozen last-kart-standing showdown!",
       "image": "img/game3.jpg",
       "url": "games/game3.html",
       "category": "puzzle",
