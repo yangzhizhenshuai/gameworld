@@ -47,8 +47,8 @@
     },
     {
       "id": "game6",
-      "name": "City Builder",
-      "description": "Design and build your dream city, plan roads, construct infrastructure, and meet citizens' needs. Balance economic development with environmental protection to create a thriving metropolis.",
+      "name": "Slice Master",
+      "description": "One button, endless slicing fun—how far can you go?",
       "image": "img/game6.jpg",
       "url": "games/game6.html",
       "category": "casual",
