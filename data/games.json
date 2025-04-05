@@ -74,11 +74,11 @@
     },
     {
       "id": "game9",
-      "name": "Jewel Maze",
-      "description": "A fast-paced puzzle game where you match similar gems to create combos and unlock special abilities. Challenge time limits, compete with friends for high scores, and become a gem master.",
+      "name": "Bru & Boegie: Episode 1 - Get da MILK!",
+      "description": "A hand-drawn 2D surrealist comedy point-and-click adventure game.",
       "image": "img/game9.jpg",
       "url": "games/game9.html",
-      "category": "puzzle",
+      "category": "rpg",
       "type": "new"
     },
     {
