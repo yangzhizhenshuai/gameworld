@@ -56,11 +56,11 @@
     },
     {
       "id": "game7",
-      "name": "Shadow Assassin",
-      "description": "In this stealthy assassin game, you'll operate in the shadows to complete various secret missions. Use stealth skills and deadly weapons to avoid detection and eliminate targets.",
+      "name": "Puzzles on the Go!",
+      "description": "Match, relax, and explore—puzzle your way through breathtaking journeys!",
       "image": "img/game7.jpg",
       "url": "games/game7.html",
-      "category": "action",
+      "category": "puzzle",
       "type": "popular"
     },
     {
