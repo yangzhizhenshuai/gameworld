@@ -83,11 +83,11 @@
     },
     {
       "id": "game10",
-      "name": "Farm Life",
-      "description": "Run your own farm, grow crops, raise animals, and expand your agricultural empire. Interact with villagers, participate in seasonal events, and experience the peaceful countryside life.",
+      "name": "Grow Pompeii into a prosperous city before Vesuvius erupts",
+      "description": "Build, burn, repeat—can your city outlast Vesuvius?",
       "image": "img/game10.jpg",
       "url": "games/game10.html",
-      "category": "casual",
+      "category": "strategy",
       "type": "new"
     },
     {
