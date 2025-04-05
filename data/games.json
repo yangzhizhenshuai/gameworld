@@ -65,11 +65,11 @@
     },
     {
       "id": "game8",
-      "name": "Monster Hunter",
-      "description": "Explore a vast open world, track and hunt mysterious creatures. Collect resources, craft equipment, improve skills, and become a legendary monster hunter.",
+      "name": "Space Waves",
+      "description": "Dodge, weave, and survive—how far can your arrow fly?",
       "image": "img/game8.jpg",
       "url": "games/game8.html",
-      "category": "rpg",
+      "category": "casual",
       "type": "popular"
     },
     {
