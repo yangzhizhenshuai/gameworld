@@ -29,12 +29,12 @@
     },
     {
       "id": "game4",
-      "name": "Kingdom Conqueror",
-      "description": "Build your kingdom, train a powerful army, and compete with other players for resources and territory. Develop strategies, form alliances, and rule the entire continent to become the true king.",
+      "name": "Fast Food Rush",
+      "description": "Ready to build your fast-food empire? Jump in and start flipping burgers! ",
       "image": "img/game4.jpg",
       "url": "games/game4.html",
       "category": "strategy",
-      "type": "new"
+      "type": "popular"
     },
     {
       "id": "game5",
