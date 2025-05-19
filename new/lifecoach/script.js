@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Default API configurations
     const DEFAULT_BASE_URL = 'https://api.deepseek.com/v1';
-    const DEFAULT_API_KEY = 'sk-47cf617a468e407a9d69fc4cd7433ded';
+    const DEFAULT_API_KEY = 'sk-b20b2f955f074540ad56d9c340c908d4';
 
     // DOM Elements
     const newDialogueBtn = document.getElementById('new-dialogue-btn');
