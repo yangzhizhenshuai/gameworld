@@ -1,0 +1,259 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    width: 95%;
+    max-width: 1200px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.top-bar {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-bar button {
+    background-color: #fff;
+    color: #4CAF50;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.top-bar button:hover {
+    background-color: #e0e0e0;
+}
+
+.main-content {
+    display: flex;
+    flex-grow: 1;
+    overflow: hidden; /* Important for child scrolling */
+}
+
+.left-sidebar {
+    width: 300px;
+    padding: 15px;
+    border-right: 1px solid #ddd;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.left-sidebar h2 {
+    margin-top: 0;
+    font-size: 1.2em;
+    color: #333;
+}
+
+#memory-editor {
+    width: calc(100% - 20px); /* Account for padding */
+    flex-grow: 1;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: monospace;
+    resize: vertical;
+}
+
+.memory-actions button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 5px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.memory-actions button:hover {
+    background-color: #4cae4c;
+}
+
+.chat-area {
+    flex-grow: 1;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Allows chat content to scroll */
+}
+
+#dialogue-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #eee;
+    background-color: #fff;
+    border-radius: 4px;
+}
+
+/* Example message bubble styles */
+.message-bubble {
+    padding: 10px 15px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+
+.user-message {
+    background-color: #DCF8C6;
+    align-self: flex-end;
+    margin-left: auto; /* Pushes to the right */
+}
+
+.assistant-message {
+    background-color: #f1f0f0;
+    align-self: flex-start;
+    margin-right: auto; /* Pushes to the left */
+}
+
+#memory-update-suggestion-container {
+    padding: 15px;
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+    background-color: #fff9c4;
+    border-radius: 4px;
+}
+
+#memory-update-suggestion-container h3 {
+    margin-top: 0;
+}
+
+#memory-diff-view {
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    min-height: 100px;
+    margin-bottom: 10px;
+    font-family: monospace;
+    white-space: pre-wrap; /* To respect newlines and spaces */
+}
+
+.chat-input-area {
+    display: flex;
+    align-items: center;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+#chat-input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+    resize: none; /* Or vertical if you prefer */
+    height: 60px;
+}
+
+.chat-input-area button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.chat-input-area button:hover {
+    background-color: #45a049;
+}
+
+/* Modal styles */
+.modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    width: 400px;
+    max-width: 90%;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+}
+
+.modal-content label {
+    display: block;
+    margin-bottom: 5px;
+    margin-top: 10px;
+}
+
+.modal-content input[type="text"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.modal-content button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    float: right;
+}
+
+.modal-content button:hover {
+    background-color: #45a049;
+}
+
+.close-btn {
+    float: right;
+    font-size: 1.5em;
+    cursor: pointer;
+    line-height: 1;
+}
+
+/* Diff styles for memory update */
+.diff-added {
+    background-color: #e6ffed;
+    color: #22863a;
+}
+
+.diff-removed {
+    background-color: #ffeef0;
+    color: #b31d28;
+    text-decoration: line-through;
+} 

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人生导师网页</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="top-bar">
+            <button id="new-dialogue-btn">新建对话</button>
+            <button id="api-config-btn">API 配置</button>
+        </header>
+
+        <div class="main-content">
+            <aside class="left-sidebar">
+                <h2>记忆.md</h2>
+                <textarea id="memory-editor" placeholder="在此编辑您的记忆..."></textarea>
+                <div class="memory-actions">
+                    <button id="save-memory-btn">保存记忆</button>
+                    <input type="file" id="import-memory-input" accept=".md" style="display: none;">
+                    <button id="import-memory-btn">导入记忆</button>
+                    <button id="export-memory-btn">导出记忆</button>
+                </div>
+            </aside>
+
+            <main class="chat-area">
+                <div id="dialogue-container">
+                    <!-- 消息气泡将在此处动态添加 -->
+                </div>
+                <div id="memory-update-suggestion-container" style="display: none;">
+                    <h3>记忆更新建议</h3>
+                    <div id="memory-diff-view">
+                        <!-- 高亮对比内容 -->
+                    </div>
+                    <button id="replace-memory-btn">一键替换</button>
+                    <button id="copy-suggestion-btn">手动复制</button>
+                </div>
+                <div class="chat-input-area">
+                    <textarea id="chat-input" placeholder="输入您的消息..."></textarea>
+                    <button id="send-message-btn">发送</button>
+                    <button id="update-memory-btn">记忆更新</button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div id="api-config-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn" id="close-api-modal">&times;</span>
+            <h2>API 配置</h2>
+            <label for="base-url-input">Base URL:</label>
+            <input type="text" id="base-url-input">
+            <label for="api-key-input">API Key:</label>
+            <input type="text" id="api-key-input">
+            <button id="save-api-config-btn">保存配置</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
