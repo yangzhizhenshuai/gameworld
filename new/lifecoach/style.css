@@ -51,13 +51,46 @@ body {
 }
 
 .left-sidebar {
-    width: 300px;
+    /* width: 300px; */ /* Remove fixed width or adjust as needed for drawer */
+    position: fixed; /* Changed for drawer behavior */
+    right: 0; /* Changed from left: 0; */
+    top: 0; /* Align with top-bar or adjust as needed */
+    bottom: 0;
+    width: 300px; /* Or use max-width and percentage for responsiveness */
+    transform: translateX(100%); /* Changed from translateX(-100%) */
+    transition: transform 0.3s ease-in-out;
+    z-index: 900; /* Ensure it's above chat but below modal */   
     padding: 15px;
-    border-right: 1px solid #ddd;
+    border-left: 1px solid #ddd; /* Changed from border-right */
     background-color: #f9f9f9;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+}
+
+.left-sidebar.open {
+    transform: translateX(0);
+    display: flex; /* Ensure it's visible when open */
+}
+
+.drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px; /* Add some space below the header */
+}
+
+.drawer-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 0 5px;
+    color: #777;
+}
+
+.drawer-close-btn:hover {
+    color: #333;
 }
 
 .left-sidebar h2 {

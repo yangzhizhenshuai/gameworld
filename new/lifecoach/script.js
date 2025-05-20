@@ -1,4 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize stagewise toolbar in development mode
+    const isDevelopment = window.location.hostname === 'localhost' || 
+                          window.location.hostname === '127.0.0.1' ||
+                          window.location.hostname.includes('.local') ||
+                          window.location.port !== '';
+    if (isDevelopment) {
+        // Define a mock process object for the toolbar if it doesn't exist
+        // to ensure process.env.NODE_ENV can be checked by the toolbar internally.
+        window.process = window.process || { env: { NODE_ENV: 'development' } };
+
+        try {
+            // Dynamically import stagewise toolbar
+            import('/node_modules/@stagewise/toolbar/dist/index.js')
+                .then(module => {
+                    const { initToolbar } = module;
+                    const stagewiseConfig = {
+                        plugins: []
+                    };
+                    initToolbar(stagewiseConfig);
+                    console.log('Stagewise toolbar initialized in development mode');
+                })
+                .catch(err => console.error('Failed to load Stagewise toolbar:', err));
+        } catch (error) {
+            console.error('Error initializing Stagewise toolbar:', error);
+        }
+    }
+    
     // Default API configurations
     const DEFAULT_BASE_URL = 'https://api.deepseek.com/v1';
     const DEFAULT_API_KEY = 'sk-b20b2f955f074540ad56d9c340c908d4';
@@ -24,6 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const baseUrlInput = document.getElementById('base-url-input');
     const apiKeyInput = document.getElementById('api-key-input');
     const saveApiConfigBtn = document.getElementById('save-api-config-btn');
+    const toggleMemoryDrawerBtn = document.getElementById('toggle-memory-drawer-btn');
+    const memoryDrawer = document.getElementById('memory-drawer');
+    const closeMemoryDrawerBtn = document.getElementById('close-memory-drawer-btn');
 
     let currentDialogue = []; // Stores { role: 'user'/'assistant', content: 'message' }
     let assistantSystemContent = '';
@@ -54,6 +84,45 @@ document.addEventListener('DOMContentLoaded', () => {
             apiConfigModal.style.display = 'none';
         }
     });
+
+    // --- Memory Drawer Toggle --- //
+    if (toggleMemoryDrawerBtn && memoryDrawer) {
+        toggleMemoryDrawerBtn.addEventListener('click', () => {
+            const isDrawerOpen = memoryDrawer.classList.contains('open');
+            if (isDrawerOpen) {
+                closeDrawer();
+            } else {
+                openDrawer();
+            }
+        });
+    }
+
+    // Added event listener for the new close button
+    if (closeMemoryDrawerBtn && memoryDrawer) {
+        closeMemoryDrawerBtn.addEventListener('click', () => {
+            closeDrawer();
+        });
+    }
+
+    function openDrawer() {
+        if (memoryDrawer) {
+            memoryDrawer.style.display = 'flex';
+            setTimeout(() => {
+                memoryDrawer.classList.add('open');
+            }, 10);
+        }
+    }
+
+    function closeDrawer() {
+        if (memoryDrawer) {
+            memoryDrawer.classList.remove('open');
+            setTimeout(() => {
+                if (!memoryDrawer.classList.contains('open')) {
+                    memoryDrawer.style.display = 'none';
+                }
+            }, 300); // Match CSS transition time
+        }
+    }
 
     // --- Memory Management (记忆.md) --- //
     function loadMemory() {

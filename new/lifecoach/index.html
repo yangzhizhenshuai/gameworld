@@ -11,11 +11,15 @@
         <header class="top-bar">
             <button id="new-dialogue-btn">新建对话</button>
             <button id="api-config-btn">API 配置</button>
+            <button id="toggle-memory-drawer-btn">记忆模块</button>
         </header>
 
         <div class="main-content">
-            <aside class="left-sidebar">
-                <h2>记忆.md</h2>
+            <aside class="left-sidebar" id="memory-drawer" style="display: none;">
+                <div class="drawer-header">
+                    <h2>记忆.md</h2>
+                    <button id="close-memory-drawer-btn" class="drawer-close-btn">&rarr;</button>
+                </div>
                 <textarea id="memory-editor" placeholder="在此编辑您的记忆..."></textarea>
                 <div class="memory-actions">
                     <button id="save-memory-btn">保存记忆</button>
