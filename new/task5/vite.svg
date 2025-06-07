@@ -1,0 +1,67 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="120" cy="120" r="120" fill="#F5F7FA"/>
+  
+  <!-- Main Task Circle -->
+  <circle cx="120" cy="120" r="80" fill="#3B82F6" opacity="0.9"/>
+  
+  <!-- Task Checkmarks -->
+  <g transform="translate(120, 120)">
+    <!-- Task 1 -->
+    <g transform="rotate(0)">
+      <circle cx="0" cy="-60" r="15" fill="#10B981"/>
+      <path d="M-6,-60 L-2,-56 L6,-64" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    
+    <!-- Task 2 -->
+    <g transform="rotate(72)">
+      <circle cx="0" cy="-60" r="15" fill="#10B981"/>
+      <path d="M-6,-60 L-2,-56 L6,-64" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    
+    <!-- Task 3 -->
+    <g transform="rotate(144)">
+      <circle cx="0" cy="-60" r="15" fill="#F59E0B"/>
+      <rect x="-6" y="-63" width="12" height="6" rx="1" fill="white"/>
+    </g>
+    
+    <!-- Task 4 -->
+    <g transform="rotate(216)">
+      <circle cx="0" cy="-60" r="15" fill="#F59E0B"/>
+      <rect x="-6" y="-63" width="12" height="6" rx="1" fill="white"/>
+    </g>
+    
+    <!-- Task 5 -->
+    <g transform="rotate(288)">
+      <circle cx="0" cy="-60" r="15" fill="#EF4444"/>
+      <path d="M-6,-60 L6,-60 M0,-66 L0,-54" stroke="white" stroke-width="3" stroke-linecap="round"/>
+    </g>
+  </g>
+  
+  <!-- AI Brain Element -->
+  <g transform="translate(120, 120)">
+    <path d="M-20,-20 C-20,-31 -11,-40 0,-40 C11,-40 20,-31 20,-20 C20,-9 11,0 0,0 L0,20" 
+          stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <circle cx="0" cy="25" r="5" fill="#FFFFFF"/>
+    
+    <!-- Circuit Patterns -->
+    <path d="M-30,0 L-40,0 M-35,-5 L-35,5 M30,0 L40,0 M35,-5 L35,5 M0,-30 L0,-40 M-5,-35 L5,-35" 
+          stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Connecting Lines -->
+  <g stroke="#D1D5DB" stroke-width="1.5" stroke-dasharray="3,3">
+    <line x1="120" y1="40" x2="120" y2="60" />
+    <line x1="193" y1="76" x2="177" y2="90" />
+    <line x1="193" y1="164" x2="177" y2="150" />
+    <line x1="120" y1="200" x2="120" y2="180" />
+    <line x1="47" y1="164" x2="63" y2="150" />
+    <line x1="47" y1="76" x2="63" y2="90" />
+  </g>
+  
+  <!-- Pulse Effect -->
+  <circle cx="120" cy="120" r="95" stroke="#3B82F6" stroke-width="2" fill="none" opacity="0.6">
+    <animate attributeName="r" from="85" to="95" dur="2s" repeatCount="indefinite" />
+    <animate attributeName="opacity" from="0.6" to="0" dur="2s" repeatCount="indefinite" />
+  </circle>
+</svg>
