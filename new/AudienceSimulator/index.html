@@ -3,7 +3,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>观众模拟器 (增强版)</title>
     <style>
         :root {
@@ -29,7 +29,14 @@
             
             --hair-dark: #2C3A47;
             --hair-grey: #95a5a6;
-            --skin-tone: #f39c12;
+            --skin-tone-1: #f4c2a1; /* 浅肤色 */
+            --skin-tone-2: #e8a87c; /* 中等肤色 */
+            --skin-tone-3: #c67856; /* 橄榄肤色 */
+            --skin-tone-4: #8b5a3c; /* 深肤色 */
+            --skin-tone-5: #6b4423; /* 更深肤色 */
+            --skin-tone-6: #f4d03f; /* 黄色肤色 */
+            --skin-tone-7: #ffbb16; /* 棕黄色肤色 */
+            --skin-tone-8: #eec4b7; /* 白色肤色 */
             
             /* New Scene Colors */
             --neon-blue: #00d4ff;
@@ -49,6 +56,14 @@
             color: var(--text-color);
             overflow: hidden;
             position: relative;
+        }
+        
+        /* 响应式布局 */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                height: 100vh;
+            }
         }
         
         body::before {
@@ -78,7 +93,16 @@
             display: flex;
             flex-direction: column;
             z-index: 10;
-            position: relative;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            transform: translateX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        #controls.collapsed {
+            transform: translateX(-100%);
         }
         
         #controls::before {
@@ -91,6 +115,135 @@
             background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
             pointer-events: none;
             border-radius: 0 20px 20px 0;
+        }
+        
+        /* 抽屉切换按钮 */
+        #drawer-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 11;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent-color), var(--neon-blue));
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #drawer-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        #drawer-toggle.controls-collapsed {
+            left: 20px;
+        }
+        
+        /* 随机按钮样式 */
+        #random-audience {
+            padding: 8px 12px;
+            background: linear-gradient(135deg, var(--warning-color), #ff9500);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+        }
+        
+        #random-audience:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
+            background: linear-gradient(135deg, #ff9500, var(--warning-color));
+        }
+        
+        #random-audience:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+        }
+        
+        /* 响应式控制面板 */
+        @media (max-width: 768px) {
+            #controls {
+                width: 100%;
+                height: 50vh;
+                border-radius: 20px 20px 0 0;
+                transform: translateY(100%);
+                top: auto;
+                bottom: 0;
+                left: 0;
+                padding: 20px;
+            }
+            
+            #controls.collapsed {
+                transform: translateY(100%);
+            }
+            
+            #controls:not(.collapsed) {
+                transform: translateY(0);
+            }
+            
+            #drawer-toggle {
+                top: auto;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            #drawer-toggle.controls-collapsed {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            /* 手机端控制组样式调整 */
+            .control-group {
+                margin-bottom: 15px;
+                padding: 12px;
+            }
+            
+            .control-group label {
+                font-size: 14px;
+            }
+            
+            .control-group select {
+                font-size: 16px; /* 防止iOS缩放 */
+            }
+            
+            #controls h2 {
+                font-size: 1.2em;
+                margin-bottom: 10px;
+            }
+            
+            #controls h3 {
+                font-size: 1em;
+                margin-top: 10px;
+                margin-bottom: 8px;
+            }
+            
+            /* 手机端字符滑块调整 */
+            .char-label {
+                font-size: 13px;
+            }
+            
+            .char-color-box {
+                width: 16px;
+                height: 16px;
+                margin-right: 8px;
+            }
+            
+            .char-value {
+                font-size: 1em;
+            }
         }
 
         #controls h2, #controls h3 {
@@ -108,11 +261,12 @@
         #controls h2 {
             font-size: 1.4em;
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
         
         #controls h3 {
-            margin-top: 25px;
+            margin-top: 15px;
+            margin-bottom: 10px;
             font-size: 1.1em;
             position: relative;
         }
@@ -130,10 +284,10 @@
         }
 
         .control-group {
-            margin-bottom: 20px;
-            padding: 15px;
+            margin-bottom: 12px;
+            padding: 10px 15px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
         }
@@ -261,6 +415,66 @@
             background-position: center;
             transition: background 0.5s ease;
             overflow: hidden;
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+        }
+        
+        #audience-container.controls-open {
+            margin-left: 320px;
+        }
+        
+        /* 响应式观众容器 */
+        @media (max-width: 768px) {
+            #audience-container {
+                margin-left: 0 !important;
+                height: 50vh;
+            }
+            
+            #audience-container.controls-open {
+                height: 50vh;
+            }
+            
+            /* 手机端观众区域调整 */
+            .audience-area {
+                transform: none !important; /* 移除3D变换，在小屏幕上更清晰 */
+            }
+            
+            /* 手机端角色大小调整 */
+            .character {
+                width: 84px;  /* 原来的75% */
+                height: 108px;
+            }
+            
+            .char-head {
+                width: 42px;
+                height: 36px;
+                top: 12px;
+            }
+            
+            .char-hair {
+                width: 48px;
+                height: 24px;
+                top: 3px;
+            }
+            
+            .char-body {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .char-body .char-arm-left,
+            .char-body .char-arm-right {
+                width: 12px;
+                height: 30px;
+            }
+            
+            .char-body .char-arm-left {
+                left: -9px;
+            }
+            
+            .char-body .char-arm-right {
+                right: -9px;
+            }
         }
         
         /* --- Enhanced Scene Styles --- */
@@ -346,6 +560,7 @@
             pointer-events: none; /* Make it non-interactive */
         }
         
+        /* Conference Scene Props */
         .conference #scene-foreground::before { /* Lectern */
             content: '';
             position: absolute;
@@ -357,7 +572,70 @@
             border-top: 5px solid #2C2C2C;
             border-radius: 10px 10px 0 0;
         }
+        
+        .conference #scene-foreground::after { /* Projector Screen */
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 20%;
+            width: 60%;
+            height: 25%;
+            background-color: #f0f0f0;
+            border: 3px solid #333;
+            border-radius: 5px;
+        }
+        
+        .conference .prop-microphone {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            width: 2%;
+            height: 8%;
+            background-color: #444;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        }
+        
+        .conference .prop-chair1 {
+            position: absolute;
+            bottom: 5%;
+            left: 10%;
+            width: 8%;
+            height: 12%;
+            background-color: #8B4513;
+            border-radius: 5px;
+        }
+        
+        .conference .prop-chair2 {
+            position: absolute;
+            bottom: 5%;
+            right: 10%;
+            width: 8%;
+            height: 12%;
+            background-color: #8B4513;
+            border-radius: 5px;
+        }
+        
+        .conference .prop-table {
+            position: absolute;
+            bottom: 8%;
+            left: 5%;
+            width: 20%;
+            height: 5%;
+            background-color: #654321;
+            border-radius: 5px;
+        }
+        
+        .conference .prop-plant {
+            position: absolute;
+            bottom: 0;
+            right: 5%;
+            width: 5%;
+            height: 15%;
+            background-color: #228B22;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        }
 
+        /* Theater Scene Props */
         .theater #scene-foreground::before { /* Stage Lip */
             content: '';
             position: absolute;
@@ -368,10 +646,533 @@
             background-color: #833471;
             box-shadow: 0 -5px 15px rgba(0,0,0,0.4);
         }
+        
+        .theater #scene-foreground::after { /* Curtain */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 20%;
+            background: linear-gradient(to bottom, #8B0000, #DC143C);
+            border-bottom: 5px solid #FFD700;
+        }
+        
+        .theater .prop-spotlight1 {
+            position: absolute;
+            top: 15%;
+            left: 20%;
+            width: 8%;
+            height: 8%;
+            background: radial-gradient(circle, #FFD700, #FFA500);
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        
+        .theater .prop-spotlight2 {
+            position: absolute;
+            top: 15%;
+            right: 20%;
+            width: 8%;
+            height: 8%;
+            background: radial-gradient(circle, #FFD700, #FFA500);
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        
+        .theater .prop-piano {
+            position: absolute;
+            bottom: 10%;
+            left: 10%;
+            width: 15%;
+            height: 8%;
+            background-color: #000;
+            border-radius: 5px;
+        }
+        
+        .theater .prop-flowers {
+            position: absolute;
+            bottom: 10%;
+            right: 10%;
+            width: 10%;
+            height: 6%;
+            background-color: #FF69B4;
+            border-radius: 50%;
+        }
+        
+        .theater .prop-mask1 {
+            position: absolute;
+            top: 25%;
+            left: 5%;
+            width: 6%;
+            height: 6%;
+            background-color: #FFD700;
+            border-radius: 50%;
+        }
+        
+        .theater .prop-mask2 {
+            position: absolute;
+            top: 25%;
+            right: 5%;
+            width: 6%;
+            height: 6%;
+            background-color: #FF6347;
+            border-radius: 50%;
+        }
 
         .audience-area {
             position: absolute;
             perspective: 800px;
+        }
+        
+        /* Stadium Scene Props */
+        .stadium .prop-goalpost1 {
+            position: absolute;
+            bottom: 55%;
+            left: 5%;
+            width: 3%;
+            height: 15%;
+            background-color: #fff;
+            border-radius: 2px;
+        }
+        
+        .stadium .prop-goalpost2 {
+            position: absolute;
+            bottom: 55%;
+            right: 5%;
+            width: 3%;
+            height: 15%;
+            background-color: #fff;
+            border-radius: 2px;
+        }
+        
+        .stadium .prop-scoreboard {
+            position: absolute;
+            top: 10%;
+            left: 30%;
+            width: 40%;
+            height: 8%;
+            background-color: #000;
+            border: 2px solid #FFD700;
+            border-radius: 5px;
+        }
+        
+        .stadium .prop-flag1 {
+            position: absolute;
+            top: 5%;
+            left: 10%;
+            width: 8%;
+            height: 6%;
+            background-color: #FF0000;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .stadium .prop-flag2 {
+            position: absolute;
+            top: 5%;
+            right: 10%;
+            width: 8%;
+            height: 6%;
+            background-color: #0000FF;
+            border-radius: 5px 0 0 5px;
+        }
+        
+        .stadium .prop-ball {
+            position: absolute;
+            bottom: 60%;
+            left: 48%;
+            width: 4%;
+            height: 4%;
+            background-color: #fff;
+            border-radius: 50%;
+            border: 2px solid #000;
+        }
+        
+        /* Concert Scene Props */
+        .concert .prop-stage {
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 15%;
+            background: linear-gradient(to top, #333, #555);
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .concert .prop-speaker1 {
+            position: absolute;
+            bottom: 15%;
+            left: 10%;
+            width: 8%;
+            height: 20%;
+            background-color: #000;
+            border-radius: 5px;
+        }
+        
+        .concert .prop-speaker2 {
+            position: absolute;
+            bottom: 15%;
+            right: 10%;
+            width: 8%;
+            height: 20%;
+            background-color: #000;
+            border-radius: 5px;
+        }
+        
+        .concert .prop-drums {
+            position: absolute;
+            bottom: 15%;
+            left: 60%;
+            width: 12%;
+            height: 10%;
+            background-color: #8B4513;
+            border-radius: 50%;
+        }
+        
+        .concert .prop-guitar {
+            position: absolute;
+            bottom: 15%;
+            left: 35%;
+            width: 6%;
+            height: 15%;
+            background-color: #D2691E;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        }
+        
+        .concert .prop-microphone-stand {
+            position: absolute;
+            bottom: 15%;
+            left: 48%;
+            width: 2%;
+            height: 12%;
+            background-color: #444;
+            border-radius: 2px;
+        }
+        
+        /* Classroom Scene Props */
+        .classroom .prop-blackboard {
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            width: 60%;
+            height: 25%;
+            background-color: #2F4F2F;
+            border: 3px solid #8B4513;
+            border-radius: 5px;
+        }
+        
+        .classroom .prop-desk1 {
+            position: absolute;
+            bottom: 10%;
+            left: 15%;
+            width: 15%;
+            height: 8%;
+            background-color: #8B4513;
+            border-radius: 3px;
+        }
+        
+        .classroom .prop-desk2 {
+            position: absolute;
+            bottom: 10%;
+            right: 15%;
+            width: 15%;
+            height: 8%;
+            background-color: #8B4513;
+            border-radius: 3px;
+        }
+        
+        .classroom .prop-globe {
+            position: absolute;
+            bottom: 18%;
+            left: 10%;
+            width: 6%;
+            height: 6%;
+            background: linear-gradient(45deg, #4169E1, #228B22);
+            border-radius: 50%;
+        }
+        
+        .classroom .prop-books {
+            position: absolute;
+            bottom: 18%;
+            right: 10%;
+            width: 8%;
+            height: 4%;
+            background-color: #DC143C;
+            border-radius: 2px;
+        }
+        
+        .classroom .prop-clock {
+            position: absolute;
+            top: 15%;
+            right: 5%;
+            width: 6%;
+            height: 6%;
+            background-color: #fff;
+            border: 2px solid #000;
+            border-radius: 50%;
+        }
+        
+        /* Boardroom Scene Props */
+        .boardroom .prop-table-large {
+            position: absolute;
+            bottom: 20%;
+            left: 20%;
+            width: 60%;
+            height: 15%;
+            background-color: #654321;
+            border-radius: 10px;
+        }
+        
+        .boardroom .prop-chair-exec1 {
+            position: absolute;
+            bottom: 15%;
+            left: 15%;
+            width: 10%;
+            height: 15%;
+            background-color: #8B0000;
+            border-radius: 5px;
+        }
+        
+        .boardroom .prop-chair-exec2 {
+            position: absolute;
+            bottom: 15%;
+            right: 15%;
+            width: 10%;
+            height: 15%;
+            background-color: #8B0000;
+            border-radius: 5px;
+        }
+        
+        .boardroom .prop-projector {
+            position: absolute;
+            top: 25%;
+            left: 45%;
+            width: 10%;
+            height: 6%;
+            background-color: #333;
+            border-radius: 3px;
+        }
+        
+        .boardroom .prop-screen-board {
+            position: absolute;
+            top: 10%;
+            left: 25%;
+            width: 50%;
+            height: 20%;
+            background-color: #f0f0f0;
+            border: 2px solid #333;
+            border-radius: 3px;
+        }
+        
+        .boardroom .prop-coffee {
+            position: absolute;
+            bottom: 35%;
+            left: 45%;
+            width: 4%;
+            height: 4%;
+            background-color: #8B4513;
+            border-radius: 50%;
+        }
+        
+        /* Wedding Scene Props */
+        .wedding .prop-altar {
+            position: absolute;
+            bottom: 15%;
+            left: 40%;
+            width: 20%;
+            height: 12%;
+            background-color: #fff;
+            border: 2px solid #FFD700;
+            border-radius: 5px;
+        }
+        
+        .wedding .prop-flowers-left {
+            position: absolute;
+            bottom: 10%;
+            left: 20%;
+            width: 8%;
+            height: 10%;
+            background-color: #FF69B4;
+            border-radius: 50%;
+        }
+        
+        .wedding .prop-flowers-right {
+            position: absolute;
+            bottom: 10%;
+            right: 20%;
+            width: 8%;
+            height: 10%;
+            background-color: #FF69B4;
+            border-radius: 50%;
+        }
+        
+        .wedding .prop-arch {
+            position: absolute;
+            bottom: 20%;
+            left: 35%;
+            width: 30%;
+            height: 25%;
+            border: 4px solid #FFD700;
+            border-bottom: none;
+            border-radius: 50% 50% 0 0;
+        }
+        
+        .wedding .prop-carpet {
+            position: absolute;
+            bottom: 0;
+            left: 30%;
+            width: 40%;
+            height: 20%;
+            background-color: #DC143C;
+            border-radius: 10px;
+        }
+        
+        .wedding .prop-candles {
+            position: absolute;
+            bottom: 27%;
+            left: 48%;
+            width: 4%;
+            height: 8%;
+            background-color: #FFD700;
+            border-radius: 50% 50% 0 0;
+        }
+        
+        /* Courtroom Scene Props */
+        .courtroom .prop-judge-bench {
+            position: absolute;
+            bottom: 20%;
+            left: 30%;
+            width: 40%;
+            height: 15%;
+            background-color: #654321;
+            border-radius: 5px;
+        }
+        
+        .courtroom .prop-gavel {
+            position: absolute;
+            bottom: 35%;
+            left: 48%;
+            width: 4%;
+            height: 6%;
+            background-color: #8B4513;
+            border-radius: 2px;
+        }
+        
+        .courtroom .prop-flag-court {
+            position: absolute;
+            top: 15%;
+            left: 10%;
+            width: 12%;
+            height: 8%;
+            background-color: #FF0000;
+            border-radius: 2px;
+        }
+        
+        .courtroom .prop-witness-stand {
+            position: absolute;
+            bottom: 15%;
+            left: 15%;
+            width: 12%;
+            height: 12%;
+            background-color: #8B4513;
+            border-radius: 3px;
+        }
+        
+        .courtroom .prop-jury-box {
+            position: absolute;
+            bottom: 10%;
+            right: 10%;
+            width: 25%;
+            height: 20%;
+            background-color: #654321;
+            border-radius: 5px;
+        }
+        
+        .courtroom .prop-scales {
+            position: absolute;
+            bottom: 35%;
+            left: 52%;
+            width: 6%;
+            height: 6%;
+            background-color: #FFD700;
+            border-radius: 50%;
+        }
+        
+        /* Nightclub Scene Props */
+        .nightclub .prop-dj-booth {
+            position: absolute;
+            bottom: 15%;
+            left: 35%;
+            width: 30%;
+            height: 15%;
+            background-color: #000;
+            border: 2px solid #00d4ff;
+            border-radius: 5px;
+        }
+        
+        .nightclub .prop-disco-ball {
+            position: absolute;
+            top: 20%;
+            left: 45%;
+            width: 10%;
+            height: 10%;
+            background: radial-gradient(circle, #C0C0C0, #808080);
+            border-radius: 50%;
+            animation: spin 4s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .nightclub .prop-bar {
+            position: absolute;
+            bottom: 10%;
+            left: 5%;
+            width: 25%;
+            height: 8%;
+            background-color: #654321;
+            border-radius: 5px;
+        }
+        
+        .nightclub .prop-dance-floor {
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            width: 60%;
+            height: 15%;
+            background: linear-gradient(45deg, #ff006e, #8338ec, #3a0ca3);
+            border-radius: 10px;
+            animation: colorShift 3s infinite;
+        }
+        
+        @keyframes colorShift {
+            0% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(180deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        
+        .nightclub .prop-speaker-left {
+            position: absolute;
+            bottom: 20%;
+            left: 10%;
+            width: 8%;
+            height: 18%;
+            background-color: #000;
+            border: 2px solid #00d4ff;
+            border-radius: 5px;
+        }
+        
+        .nightclub .prop-speaker-right {
+            position: absolute;
+            bottom: 20%;
+            right: 10%;
+            width: 8%;
+            height: 18%;
+            background-color: #000;
+            border: 2px solid #ff0080;
+            border-radius: 5px;
         }
 
         .conference .audience-area { top: 40%; left: 15%; width: 70%; height: 45%; }
@@ -387,16 +1188,19 @@
         /* --- Enhanced Character Styles --- */
         .character {
             position: absolute;
-            width: 28px;
-            height: 36px;
+            width: 112px;
+            height: 144px;
             animation: fidget 10s infinite;
             transition: all 0.3s ease-out;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
         }
         
         .character:hover {
-            transform: scale(1.1) translateY(-2px);
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+            transform: scale(1.05) translateY(-4px);
+            filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.4));
         }
 
         .char-head, .char-hair, .char-body {
@@ -406,64 +1210,378 @@
         }
 
         .char-head {
-            width: 14px;
-            height: 12px;
-            top: 4px;
-            background-color: var(--skin-tone);
-            border-radius: 3px;
-            /* Eyes using box-shadow */
-            box-shadow: 3px 4px 0 1px #000, 8px 4px 0 1px #000;
+            width: 56px;
+            height: 48px;
+            top: 16px;
+            background-color: var(--skin-tone-2);
+            border-radius: 12px;
             position: relative;
+            border: 2px solid rgba(0, 0, 0, 0.2);
         }
         
-        .char-head::before {
+        /* 眼睛样式 */
+        .char-eyes {
+            position: absolute;
+            top: 18px;
+            left: 12px;
+            width: 32px;
+            height: 8px;
+        }
+        
+        .char-eyes::before, .char-eyes::after {
             content: '';
             position: absolute;
-            top: 6px;
+            width: 8px;
+            height: 8px;
+            background-color: #000;
+            border-radius: 50%;
+        }
+        
+        .char-eyes::before {
+            left: 0;
+        }
+        
+        .char-eyes::after {
+            right: 0;
+        }
+        
+        /* 不同眼睛类型 */
+        .eyes-normal .char-eyes::before, .eyes-normal .char-eyes::after {
+            border-radius: 50%;
+        }
+        
+        .eyes-sleepy .char-eyes::before, .eyes-sleepy .char-eyes::after {
+            height: 4px;
+            border-radius: 4px;
+            top: 2px;
+        }
+        
+        .eyes-wide .char-eyes::before, .eyes-wide .char-eyes::after {
+            width: 10px;
+            height: 10px;
+            left: -1px;
+        }
+        
+        .eyes-wide .char-eyes::after {
+            right: -1px;
+            left: auto;
+        }
+        
+        .eyes-squint .char-eyes::before, .eyes-squint .char-eyes::after {
+            height: 3px;
+            border-radius: 2px;
+            top: 3px;
+        }
+        
+        /* 嘴巴样式 */
+        .char-mouth {
+            position: absolute;
+            top: 32px;
             left: 50%;
             transform: translateX(-50%);
-            width: 2px;
-            height: 1px;
+            width: 8px;
+            height: 4px;
             background-color: #000;
-            border-radius: 1px;
+            border-radius: 2px;
+        }
+        
+        /* 不同嘴巴类型 */
+        .mouth-smile .char-mouth {
+            width: 12px;
+            height: 6px;
+            background: transparent;
+            border: 2px solid #000;
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+        }
+        
+        .mouth-frown .char-mouth {
+            width: 10px;
+            height: 5px;
+            background: transparent;
+            border: 2px solid #000;
+            border-bottom: none;
+            border-radius: 10px 10px 0 0;
+            top: 34px;
+        }
+        
+        .mouth-open .char-mouth {
+            width: 6px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #8B0000;
+            border: 2px solid #000;
+        }
+        
+        .mouth-neutral .char-mouth {
+            width: 8px;
+            height: 2px;
+            background-color: #000;
+            border-radius: 2px;
         }
         
         .char-hair {
-            width: 16px;
-            height: 8px;
-            top: 1px;
+            width: 64px;
+            height: 32px;
+            top: 4px;
             background-color: var(--hair-dark);
-            border-radius: 4px 4px 2px 2px;
+            border-radius: 16px 16px 8px 8px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
         }
         
-        .char-body {
-            width: 20px;
+        /* 不同发型样式 */
+        .hair-short .char-hair {
+            height: 24px;
+            top: 8px;
+            border-radius: 12px 12px 6px 6px;
+        }
+        
+        .hair-long .char-hair {
+            height: 40px;
+            top: 0;
+            border-radius: 20px 20px 10px 10px;
+        }
+        
+        .hair-curly .char-hair {
+            border-radius: 32px 32px 16px 16px;
+        }
+        
+        .hair-brown.hair-curly .char-hair {
+            background: radial-gradient(circle at 30% 30%, #8B4513, transparent 40%),
+                        radial-gradient(circle at 70% 30%, #8B4513, transparent 40%),
+                        radial-gradient(circle at 50% 60%, #8B4513, transparent 40%),
+                        #8B4513 !important;
+        }
+        
+        .hair-black.hair-curly .char-hair {
+            background: radial-gradient(circle at 30% 30%, #2C3A47, transparent 40%),
+                        radial-gradient(circle at 70% 30%, #2C3A47, transparent 40%),
+                        radial-gradient(circle at 50% 60%, #2C3A47, transparent 40%),
+                        #2C3A47 !important;
+        }
+        
+        .hair-blonde.hair-curly .char-hair {
+            background: radial-gradient(circle at 30% 30%, #F4D03F, transparent 40%),
+                        radial-gradient(circle at 70% 30%, #F4D03F, transparent 40%),
+                        radial-gradient(circle at 50% 60%, #F4D03F, transparent 40%),
+                        #F4D03F !important;
+        }
+        
+        .hair-red.hair-curly .char-hair {
+            background: radial-gradient(circle at 30% 30%, #E74C3C, transparent 40%),
+                        radial-gradient(circle at 70% 30%, #E74C3C, transparent 40%),
+                        radial-gradient(circle at 50% 60%, #E74C3C, transparent 40%),
+                        #E74C3C !important;
+        }
+        
+        .hair-grey.hair-curly .char-hair {
+            background: radial-gradient(circle at 30% 30%, #95a5a6, transparent 40%),
+                        radial-gradient(circle at 70% 30%, #95a5a6, transparent 40%),
+                        radial-gradient(circle at 50% 60%, #95a5a6, transparent 40%),
+                        #95a5a6 !important;
+        }
+        
+        .hair-bald .char-hair {
+            display: none;
+        }
+        
+        .hair-ponytail .char-hair::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 10px;
+            width: 12px;
             height: 20px;
+            background-color: inherit;
+            border-radius: 6px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 确保马尾辫的颜色正确 */
+        .hair-brown.hair-ponytail .char-hair::after { background-color: #8B4513; }
+        .hair-black.hair-ponytail .char-hair::after { background-color: #2C3A47; }
+        .hair-blonde.hair-ponytail .char-hair::after { background-color: #F4D03F; }
+        .hair-red.hair-ponytail .char-hair::after { background-color: #E74C3C; }
+        .hair-grey.hair-ponytail .char-hair::after { background-color: #95a5a6; }
+        
+        /* 不同发色 */
+        .hair-brown .char-hair { background-color: #8B4513 !important; }
+        .hair-black .char-hair { background-color: #2C3A47 !important; }
+        .hair-blonde .char-hair { background-color: #F4D03F !important; }
+        .hair-red .char-hair { background-color: #E74C3C !important; }
+        .hair-grey .char-hair { background-color: #95a5a6 !important; }
+        
+        .char-body {
+            width: 80px;
+            height: 80px;
             bottom: 0;
-            border-radius: 4px;
+            border-radius: 16px;
             position: relative;
+            border: 2px solid rgba(0, 0, 0, 0.2);
         }
         
         .char-body::after {
             content: '';
             position: absolute;
-            bottom: -2px;
-            left: 2px;
-            width: 6px;
-            height: 4px;
+            bottom: -8px;
+            left: 8px;
+            width: 24px;
+            height: 16px;
             background-color: inherit;
-            border-radius: 2px;
+            border-radius: 8px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
         }
         
         .char-body::before {
             content: '';
             position: absolute;
-            bottom: -2px;
-            right: 2px;
-            width: 6px;
-            height: 4px;
+            bottom: -8px;
+            right: 8px;
+            width: 24px;
+            height: 16px;
             background-color: inherit;
+            border-radius: 8px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Arms */
+        .char-body .char-arm-left,
+        .char-body .char-arm-right {
+            position: absolute;
+            width: 16px;
+            height: 40px;
+            background-color: var(--skin-tone-2);
+            border-radius: 8px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            top: 8px;
+        }
+        
+        .char-body .char-arm-left {
+            left: -12px;
+        }
+        
+        .char-body .char-arm-right {
+            right: -12px;
+        }
+        
+        /* 手持物品样式 */
+        .char-item {
+            position: absolute;
+            bottom: -4px;
+            right: -8px;
+            width: 12px;
+            height: 12px;
             border-radius: 2px;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+        
+        .char-body .char-arm-right .char-item {
+            bottom: -4px;
+            right: -8px;
+        }
+        
+        .char-body .char-arm-left .char-item {
+            bottom: -4px;
+            left: -8px;
+        }
+        
+        /* 不同物品类型 */
+        .item-phone .char-item {
+            background-color: #2C3E50;
+            width: 8px;
+            height: 14px;
+            border-radius: 3px;
+            position: relative;
+        }
+        
+        .item-phone .char-item::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 1px;
+            width: 6px;
+            height: 10px;
+            background: linear-gradient(45deg, #3498db, #5dade2);
+            border-radius: 1px;
+            opacity: 0.8;
+        }
+        
+        .item-coffee .char-item {
+            background-color: #8B4513;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            width: 10px;
+            height: 12px;
+        }
+        
+        .item-coffee::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            right: -3px;
+            width: 3px;
+            height: 6px;
+            border: 1px solid #8B4513;
+            border-left: none;
+            border-radius: 0 3px 3px 0;
+        }
+        
+        .item-book .char-item {
+            background-color: #E74C3C;
+            width: 10px;
+            height: 8px;
+            border-radius: 1px;
+        }
+        
+        .item-pen .char-item {
+            background-color: #3498DB;
+            width: 2px;
+            height: 16px;
+            border-radius: 1px;
+        }
+        
+        .item-bag .char-item {
+            background-color: #8E44AD;
+            width: 14px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        
+        .item-bag::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 3px;
+            width: 8px;
+            height: 2px;
+            background-color: #8E44AD;
+            border-radius: 1px;
+        }
+        
+        .item-glasses .char-item {
+            background: transparent;
+            border: 2px solid #2C3E50;
+            width: 16px;
+            height: 6px;
+            border-radius: 8px;
+            top: 15px;
+            right: -2px;
+            border-bottom: none;
+        }
+        
+        .item-glasses::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: -1px;
+            width: 4px;
+            height: 2px;
+            background-color: #2C3E50;
+            border-radius: 1px;
+        }
+        
+        .item-none .char-item {
+            display: none;
         }
         
         /* Character specific body colors */
@@ -476,8 +1594,33 @@
         .old-woman .char-body { background-color: var(--char-old-woman); }
 
         /* Special character styles */
-        .old-man .char-hair, .old-woman .char-hair {
-            background-color: var(--hair-grey);
+        .old-man.hair-bald .char-hair, .old-woman.hair-bald .char-hair {
+            display: none;
+        }
+        
+        /* 为特定角色类型添加皱纹效果 */
+        .old-man .char-head::before, .old-woman .char-head::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 8px;
+            width: 40px;
+            height: 1px;
+            background-color: rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 0 rgba(0, 0, 0, 0.1), 0 16px 0 rgba(0, 0, 0, 0.08);
+        }
+        
+        /* 没有胡须的老人保持原来的嘴巴样式 */
+        .old-man:not(.has-beard) .char-head::after {
+            content: '';
+            position: absolute;
+            top: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 4px;
+            background-color: #000;
+            border-radius: 2px;
         }
         
         .middle-man .char-body {
@@ -485,6 +1628,10 @@
         }
         
         /* Override default pseudo-elements for middle-man */
+        .middle-man .char-body {
+            position: relative;
+        }
+        
         .middle-man .char-body::before {
             content: '';
             position: absolute;
@@ -494,29 +1641,96 @@
             width: 0;
             height: 0;
             border-style: solid;
-            border-width: 10px 8px 0 8px;
+            border-width: 40px 32px 0 32px;
             border-color: var(--char-middle-man-shirt) transparent transparent transparent;
+            z-index: 1;
         }
         
         .middle-man .char-body::after {
             content: '';
             position: absolute;
-            bottom: -2px;
-            left: 2px;
-            width: 6px;
-            height: 4px;
+            bottom: -8px;
+            left: 8px;
+            width: 24px;
+            height: 16px;
             background-color: var(--char-middle-man-suit);
+            border-radius: 8px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Add tie for middle-man */
+        .middle-man .char-body .char-tie {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 32px;
+            background-color: #8B0000;
             border-radius: 2px;
+            z-index: 2;
         }
         
         /* Add some sparkle effects for special characters */
         .young-woman .char-hair::before {
             content: '✨';
             position: absolute;
-            top: -2px;
-            right: -2px;
-            font-size: 8px;
+            top: -8px;
+            right: -8px;
+            font-size: 24px;
             animation: sparkle 2s infinite;
+        }
+        
+        /* Add bow for girl */
+        .girl .char-hair::after {
+            content: '🎀';
+            position: absolute;
+            top: -4px;
+            right: 8px;
+            font-size: 20px;
+        }
+        
+        /* Add beard for some older men */
+        .old-man.has-beard .char-head::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 8px;
+            background-color: #95a5a6;
+            border-radius: 0 0 12px 12px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Add glasses reflection */
+        .item-glasses .char-item::after {
+            content: '';
+            position: absolute;
+            left: 2px;
+            top: 1px;
+            width: 6px;
+            height: 3px;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            border-radius: 2px;
+        }
+        
+        /* 为咖啡杯添加蒸汽效果 */
+        .item-coffee .char-item::after {
+            content: '☁️';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8px;
+            opacity: 0.7;
+            animation: steam 2s infinite;
+        }
+        
+        @keyframes steam {
+            0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.7; }
+            50% { transform: translateX(-50%) translateY(-2px); opacity: 0.4; }
         }
         
         @keyframes sparkle {
@@ -584,61 +1798,154 @@
         }
         
         .reacting {
-            transform: scale(1.2) translateY(-8px) !important;
             filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4)) brightness(1.2);
-            animation: reaction 0.5s ease-out;
         }
         
-        @keyframes reaction {
-            0% { transform: scale(1) translateY(0); }
-            50% { transform: scale(1.3) translateY(-12px) rotate(5deg); }
-            100% { transform: scale(1.2) translateY(-8px); }
+        /* 多样化反应动画 */
+        .reaction-scale {
+            animation: reactionScale 2.2s ease-out;
         }
         
-        #startButton {
-            padding: 15px 25px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            background: linear-gradient(135deg, var(--success-color), var(--neon-green));
-            color: white;
-            border: none;
-            border-radius: 12px;
-            margin-top: auto;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        .reaction-nod {
+            animation: reactionNod 2.5s ease-out;
         }
         
-        #startButton::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
+        .reaction-shake {
+            animation: reactionShake 2.8s ease-out;
         }
         
-        #startButton:hover::before {
-            left: 100%;
+        .reaction-wave {
+            animation: reactionWave 3.0s ease-out;
         }
         
-        #startButton:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+        .reaction-hands-up {
+            animation: reactionHandsUp 2.6s ease-out;
         }
         
-        #startButton.active {
-            background: linear-gradient(135deg, var(--danger-color), #ff6b6b);
-            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        .reaction-sway {
+            animation: reactionSway 2.0s ease-out;
         }
         
-        #startButton.active:hover {
-            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        @keyframes reactionScale {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.15); }
+            60% { transform: scale(1.25); }
+            80% { transform: scale(1.2); }
+            100% { transform: scale(1.05); }
         }
+        
+        /* 点头动作 - 头部上下移动3次 */
+        @keyframes reactionNod {
+            0%, 100% { transform: translateY(0); }
+            12% { transform: translateY(-6px); }
+            24% { transform: translateY(0); }
+            36% { transform: translateY(-6px); }
+            48% { transform: translateY(0); }
+            60% { transform: translateY(-6px); }
+            72% { transform: translateY(0); }
+        }
+        
+        .reaction-nod .char-head {
+            animation: reactionNodHead 2.5s ease-out;
+        }
+        
+        @keyframes reactionNodHead {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            12% { transform: translateX(-50%) translateY(-8px); }
+            24% { transform: translateX(-50%) translateY(0); }
+            36% { transform: translateX(-50%) translateY(-8px); }
+            48% { transform: translateX(-50%) translateY(0); }
+            60% { transform: translateX(-50%) translateY(-8px); }
+            72% { transform: translateX(-50%) translateY(0); }
+        }
+        
+        @keyframes reactionShake {
+            0%, 100% { transform: rotateZ(0deg); }
+            10% { transform: rotateZ(-5deg); }
+            20% { transform: rotateZ(5deg); }
+            30% { transform: rotateZ(-8deg); }
+            40% { transform: rotateZ(8deg); }
+            50% { transform: rotateZ(-6deg); }
+            60% { transform: rotateZ(6deg); }
+            70% { transform: rotateZ(-4deg); }
+            80% { transform: rotateZ(4deg); }
+            90% { transform: rotateZ(-2deg); }
+        }
+        
+        /* 单手挥手动作 - 左手或右手挥动 */
+        @keyframes reactionWave {
+            0%, 100% { transform: translateY(0); }
+            20% { transform: translateY(-4px); }
+            40% { transform: translateY(-2px); }
+            60% { transform: translateY(-6px); }
+            80% { transform: translateY(-1px); }
+        }
+        
+        .reaction-wave-left .char-arm-left {
+            animation: reactionWaveLeft 3.0s ease-out;
+            transform-origin: top right;
+        }
+        
+        .reaction-wave-right .char-arm-right {
+            animation: reactionWaveRight 3.0s ease-out;
+            transform-origin: top left;
+        }
+        
+        @keyframes reactionWaveLeft {
+            0%, 100% { transform: rotate(0deg); }
+            15% { transform: rotate(-25deg); }
+            30% { transform: rotate(-45deg); }
+            45% { transform: rotate(-25deg); }
+            60% { transform: rotate(-45deg); }
+            75% { transform: rotate(-25deg); }
+            90% { transform: rotate(-10deg); }
+        }
+        
+        @keyframes reactionWaveRight {
+            0%, 100% { transform: rotate(0deg); }
+            15% { transform: rotate(25deg); }
+            30% { transform: rotate(45deg); }
+            45% { transform: rotate(25deg); }
+            60% { transform: rotate(45deg); }
+            75% { transform: rotate(25deg); }
+            90% { transform: rotate(10deg); }
+        }
+        
+        /* 双手举起动作 - 两只手向上举 */
+        @keyframes reactionHandsUp {
+            0%, 100% { transform: translateY(0) scale(1); }
+            25% { transform: translateY(-8px) scale(1.05); }
+            50% { transform: translateY(-18px) scale(1.12); }
+            75% { transform: translateY(-12px) scale(1.08); }
+        }
+        
+        .reaction-hands-up .char-arm-left {
+            animation: reactionHandsUpArm 2.6s ease-out;
+            transform-origin: top right;
+        }
+        
+        .reaction-hands-up .char-arm-right {
+            animation: reactionHandsUpArm 2.6s ease-out;
+            transform-origin: top left;
+        }
+        
+        @keyframes reactionHandsUpArm {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-45deg); }
+            50% { transform: rotate(-90deg); }
+            75% { transform: rotate(-70deg); }
+        }
+        
+        /* 左右动作 - 整体左右移动1次 */
+        @keyframes reactionSway {
+            0% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(-15px) rotate(-3deg); }
+            50% { transform: translateX(15px) rotate(3deg); }
+            75% { transform: translateX(-8px) rotate(-1deg); }
+            100% { transform: translateX(0) rotate(0deg); }
+        }
+        
+
         
         #mic-status {
             text-align: center;
@@ -683,6 +1990,8 @@
 </head>
 <body>
 
+    <button id="drawer-toggle">☰</button>
+
     <div id="controls">
         <h2>控制面板</h2>
 
@@ -718,15 +2027,16 @@
             <input type="range" id="reaction-sensitivity" min="10" max="100" value="50">
         </div>
 
-        <h3>观众构成</h3>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+            <h3 style="margin: 0;">观众构成</h3>
+            <button id="random-audience">🎲 随机</button>
+        </div>
         
         <div id="character-sliders">
             <!-- Sliders will be dynamically inserted here -->
         </div>
         
-        <div id="mic-status">🔇 麦克风已关闭</div>
-        
-        <button id="startButton">🎙️ 启动模拟 & 开启麦克风</button>
+        <div id="mic-status">🎙️ 麦克风监听中...</div>
 
     </div>
 
@@ -743,7 +2053,6 @@
         const audienceContainer = document.getElementById('audience-container');
         const audienceArea = document.querySelector('.audience-area');
         const characterSlidersContainer = document.getElementById('character-sliders');
-        const startButton = document.getElementById('startButton');
         const micStatus = document.getElementById('mic-status');
 
         const characterTypes = [
@@ -759,6 +2068,69 @@
 
         let audioContext, analyser, microphone, isMicActive = false, reactionTimeout = null;
         let currentMood = 'neutral', reactionSensitivity = 50;
+        
+        // 角色外观选项
+        const skinTones = ['skin-tone-1', 'skin-tone-2', 'skin-tone-3', 'skin-tone-4', 'skin-tone-5', 'skin-tone-6', 'skin-tone-7', 'skin-tone-8'];
+        const eyeTypes = ['eyes-normal', 'eyes-sleepy', 'eyes-wide', 'eyes-squint'];
+        const mouthTypes = ['mouth-neutral', 'mouth-smile', 'mouth-frown', 'mouth-open'];
+        const hairStyles = ['hair-normal', 'hair-short', 'hair-long', 'hair-curly', 'hair-ponytail'];
+        const hairColors = ['hair-black', 'hair-brown', 'hair-blonde', 'hair-red', 'hair-grey'];
+        const itemTypes = ['item-none', 'item-phone', 'item-coffee', 'item-book', 'item-pen', 'item-bag', 'item-glasses'];
+        
+        // 根据角色类型获取合适的外观选项
+        function getCharacterAppearance(charId) {
+            const appearance = {
+                skinTone: skinTones[Math.floor(Math.random() * skinTones.length)],
+                eyeType: eyeTypes[Math.floor(Math.random() * eyeTypes.length)],
+                mouthType: mouthTypes[Math.floor(Math.random() * mouthTypes.length)],
+                hairStyle: 'hair-normal',
+                hairColor: hairColors[Math.floor(Math.random() * hairColors.length)],
+                item: itemTypes[Math.floor(Math.random() * itemTypes.length)]
+            };
+            
+            // 根据角色类型调整外观
+            switch(charId) {
+                case 'boy':
+                case 'young-man':
+                    appearance.hairStyle = ['hair-normal', 'hair-short'][Math.floor(Math.random() * 2)];
+                    appearance.item = ['item-none', 'item-phone', 'item-book', 'item-pen'][Math.floor(Math.random() * 4)];
+                    appearance.eyeType = ['eyes-normal', 'eyes-wide', 'eyes-normal'][Math.floor(Math.random() * 3)]; // 年轻人更多大眼睛
+                    appearance.mouthType = ['mouth-neutral', 'mouth-smile', 'mouth-smile'][Math.floor(Math.random() * 3)]; // 更多微笑
+                    break;
+                case 'girl':
+                case 'young-woman':
+                    appearance.hairStyle = ['hair-normal', 'hair-long', 'hair-ponytail'][Math.floor(Math.random() * 3)];
+                    appearance.item = ['item-none', 'item-phone', 'item-bag', 'item-coffee'][Math.floor(Math.random() * 4)];
+                    appearance.eyeType = ['eyes-normal', 'eyes-wide', 'eyes-normal'][Math.floor(Math.random() * 3)]; // 年轻女性更多大眼睛
+                    appearance.mouthType = ['mouth-smile', 'mouth-smile', 'mouth-neutral'][Math.floor(Math.random() * 3)]; // 更多微笑
+                    break;
+                case 'middle-man':
+                    appearance.hairStyle = ['hair-normal', 'hair-short'][Math.floor(Math.random() * 2)];
+                    appearance.hairColor = ['hair-black', 'hair-brown', 'hair-grey'][Math.floor(Math.random() * 3)];
+                    appearance.item = ['item-phone', 'item-coffee', 'item-pen', 'item-glasses'][Math.floor(Math.random() * 4)];
+                    appearance.mouthType = ['mouth-neutral', 'mouth-smile'][Math.floor(Math.random() * 2)];
+                    appearance.eyeType = ['eyes-normal', 'eyes-normal', 'eyes-squint'][Math.floor(Math.random() * 3)]; // 更多正常眼睛
+                    break;
+                case 'middle-woman':
+                    appearance.hairStyle = ['hair-normal', 'hair-short', 'hair-ponytail'][Math.floor(Math.random() * 3)];
+                    appearance.item = ['item-coffee', 'item-bag', 'item-phone', 'item-glasses'][Math.floor(Math.random() * 4)];
+                    appearance.eyeType = ['eyes-normal', 'eyes-normal', 'eyes-squint'][Math.floor(Math.random() * 3)];
+                    appearance.mouthType = ['mouth-neutral', 'mouth-smile', 'mouth-neutral'][Math.floor(Math.random() * 3)];
+                    break;
+                case 'old-man':
+                case 'old-woman':
+                    appearance.hairColor = ['hair-grey', 'hair-grey', 'hair-black'][Math.floor(Math.random() * 3)]; // 更多灰发
+                    if (charId === 'old-man') {
+                        appearance.hairStyle = ['hair-short', 'hair-bald'][Math.floor(Math.random() * 2)];
+                        appearance.hasBeard = Math.random() > 0.6; // 40% 概率有胡须
+                    }
+                    appearance.item = ['item-none', 'item-glasses', 'item-book'][Math.floor(Math.random() * 3)];
+                    appearance.eyeType = ['eyes-normal', 'eyes-sleepy', 'eyes-squint'][Math.floor(Math.random() * 3)]; // 老年人更多眯眼
+                    break;
+            }
+            
+            return appearance;
+        }
 
         function createSliders() {
             let html = '';
@@ -772,7 +2144,7 @@
                             </div>
                             <span id="${char.id}-value" class="char-value">0</span>
                         </label>
-                        <input type="range" id="${char.id}-count" class="char-slider" min="0" max="20" value="0" data-char-id="${char.id}">
+                        <input type="range" id="${char.id}-count" class="char-slider" min="0" max="10" value="0" data-char-id="${char.id}">
                     </div>
                 `;
             });
@@ -786,12 +2158,105 @@
 
         function updateScene() {
             audienceContainer.className = sceneSelect.value;
+            addSceneProps();
             generateAudience();
+        }
+        
+        function addSceneProps() {
+            // 清除现有道具
+            const existingProps = document.querySelectorAll('.scene-prop');
+            existingProps.forEach(prop => prop.remove());
+            
+            const sceneType = sceneSelect.value;
+            const foreground = document.getElementById('scene-foreground');
+            
+            const propConfigs = {
+                'conference': [
+                    { class: 'prop-microphone', type: 'div' },
+                    { class: 'prop-chair1', type: 'div' },
+                    { class: 'prop-chair2', type: 'div' },
+                    { class: 'prop-table', type: 'div' },
+                    { class: 'prop-plant', type: 'div' }
+                ],
+                'theater': [
+                    { class: 'prop-spotlight1', type: 'div' },
+                    { class: 'prop-spotlight2', type: 'div' },
+                    { class: 'prop-piano', type: 'div' },
+                    { class: 'prop-flowers', type: 'div' },
+                    { class: 'prop-mask1', type: 'div' },
+                    { class: 'prop-mask2', type: 'div' }
+                ],
+                'stadium': [
+                    { class: 'prop-goalpost1', type: 'div' },
+                    { class: 'prop-goalpost2', type: 'div' },
+                    { class: 'prop-scoreboard', type: 'div' },
+                    { class: 'prop-flag1', type: 'div' },
+                    { class: 'prop-flag2', type: 'div' },
+                    { class: 'prop-ball', type: 'div' }
+                ],
+                'concert': [
+                    { class: 'prop-stage', type: 'div' },
+                    { class: 'prop-speaker1', type: 'div' },
+                    { class: 'prop-speaker2', type: 'div' },
+                    { class: 'prop-drums', type: 'div' },
+                    { class: 'prop-guitar', type: 'div' },
+                    { class: 'prop-microphone-stand', type: 'div' }
+                ],
+                'classroom': [
+                    { class: 'prop-blackboard', type: 'div' },
+                    { class: 'prop-desk1', type: 'div' },
+                    { class: 'prop-desk2', type: 'div' },
+                    { class: 'prop-globe', type: 'div' },
+                    { class: 'prop-books', type: 'div' },
+                    { class: 'prop-clock', type: 'div' }
+                ],
+                'boardroom': [
+                    { class: 'prop-table-large', type: 'div' },
+                    { class: 'prop-chair-exec1', type: 'div' },
+                    { class: 'prop-chair-exec2', type: 'div' },
+                    { class: 'prop-projector', type: 'div' },
+                    { class: 'prop-screen-board', type: 'div' },
+                    { class: 'prop-coffee', type: 'div' }
+                ],
+                'wedding': [
+                    { class: 'prop-altar', type: 'div' },
+                    { class: 'prop-flowers-left', type: 'div' },
+                    { class: 'prop-flowers-right', type: 'div' },
+                    { class: 'prop-arch', type: 'div' },
+                    { class: 'prop-carpet', type: 'div' },
+                    { class: 'prop-candles', type: 'div' }
+                ],
+                'courtroom': [
+                    { class: 'prop-judge-bench', type: 'div' },
+                    { class: 'prop-gavel', type: 'div' },
+                    { class: 'prop-flag-court', type: 'div' },
+                    { class: 'prop-witness-stand', type: 'div' },
+                    { class: 'prop-jury-box', type: 'div' },
+                    { class: 'prop-scales', type: 'div' }
+                ],
+                'nightclub': [
+                    { class: 'prop-dj-booth', type: 'div' },
+                    { class: 'prop-disco-ball', type: 'div' },
+                    { class: 'prop-bar', type: 'div' },
+                    { class: 'prop-dance-floor', type: 'div' },
+                    { class: 'prop-speaker-left', type: 'div' },
+                    { class: 'prop-speaker-right', type: 'div' }
+                ]
+            };
+            
+            if (propConfigs[sceneType]) {
+                propConfigs[sceneType].forEach(config => {
+                    const prop = document.createElement(config.type);
+                    prop.className = `scene-prop ${config.class}`;
+                    foreground.appendChild(prop);
+                });
+            }
         }
 
         function generateAudience() {
             audienceArea.innerHTML = '';
             const audienceList = [];
+            const occupiedPositions = [];
 
             characterTypes.forEach(char => {
                 const count = parseInt(document.getElementById(`${char.id}-count`).value, 10);
@@ -800,28 +2265,329 @@
                 }
             });
 
+            // 打乱顺序
             for (let i = audienceList.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [audienceList[i], audienceList[j]] = [audienceList[j], audienceList[i]];
             }
 
-            audienceList.forEach(charId => {
+            // 获取道具位置，避免重叠
+            const propPositions = getScenePropsPositions();
+
+            // 分批生成，确保每个角色都有合适的位置
+            let successCount = 0;
+            let failureCount = 0;
+            
+            audienceList.forEach((charId, index) => {
                 const charElement = document.createElement('div');
                 charElement.classList.add('character', charId);
                 
-                // --- NEW: Add inner HTML structure for detailed character ---
+                // 获取角色外观
+                const appearance = getCharacterAppearance(charId);
+                
+                // 应用外观类
+                charElement.classList.add(
+                    appearance.eyeType, 
+                    appearance.mouthType, 
+                    appearance.hairStyle, 
+                    appearance.hairColor,
+                    appearance.item
+                );
+                
+                // 添加胡须（如果有）
+                if (appearance.hasBeard) {
+                    charElement.classList.add('has-beard');
+                }
+                
+                // 根据物品类型决定哪只手拿东西
+                const handSide = Math.random() > 0.5 ? 'right' : 'left';
+                
+                // 添加角色内部结构
                 charElement.innerHTML = `
                     <div class="char-hair"></div>
-                    <div class="char-head"></div>
-                    <div class="char-body"></div>
+                    <div class="char-head" style="background-color: var(--${appearance.skinTone});">
+                        <div class="char-eyes"></div>
+                        <div class="char-mouth"></div>
+                    </div>
+                    <div class="char-body">
+                        <div class="char-arm-left" style="background-color: var(--${appearance.skinTone});">
+                            ${handSide === 'left' && appearance.item !== 'item-none' && appearance.item !== 'item-glasses' ? '<div class="char-item"></div>' : ''}
+                        </div>
+                        <div class="char-arm-right" style="background-color: var(--${appearance.skinTone});">
+                            ${handSide === 'right' && appearance.item !== 'item-none' && appearance.item !== 'item-glasses' ? '<div class="char-item"></div>' : ''}
+                        </div>
+                        ${charId === 'middle-man' ? '<div class="char-tie"></div>' : ''}
+                        ${appearance.item === 'item-glasses' ? '<div class="char-item"></div>' : ''}
+                    </div>
                 `;
                 
-                charElement.style.left = `${Math.random() * 95}%`;
-                charElement.style.top = `${Math.random() * 95}%`;
+                // 生成不重叠的位置
+                let position = generateNonOverlappingPosition(occupiedPositions, propPositions);
+                
+                // 验证生成的位置确实不重叠
+                const isMobile = window.innerWidth <= 768;
+                const minDistanceChars = isMobile ? 18 : 25;
+                const minDistanceProps = isMobile ? 12 : 18;
+                
+                if (!isOverlapping(position, occupiedPositions, minDistanceChars) &&
+                    !isOverlapping(position, propPositions, minDistanceProps)) {
+                    successCount++;
+                } else {
+                    failureCount++;
+                    // 如果仍然重叠，尝试边缘位置
+                    position = {
+                        x: 5 + (index % 10) * 8,
+                        y: 5 + Math.floor(index / 10) * 12,
+                        width: position.width,
+                        height: position.height
+                    };
+                }
+                
+                charElement.style.left = `${position.x}%`;
+                charElement.style.top = `${position.y}%`;
                 charElement.style.animationDelay = `${Math.random() * -10}s`;
 
+                occupiedPositions.push(position);
                 audienceArea.appendChild(charElement);
             });
+            
+            // 最终验证：检查所有角色是否真的不重叠
+            validateCharacterPositions(occupiedPositions);
+            
+            // 调试信息（仅在开发环境中显示）
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                console.log(`角色生成统计: 成功 ${successCount}, 失败 ${failureCount}, 总计 ${audienceList.length}`);
+            }
+        }
+        
+        function getScenePropsPositions() {
+            const sceneType = sceneSelect.value;
+            const propPositions = [];
+            
+            // 根据场景类型返回道具占用的区域（扩大保护区域）
+            const sceneProps = {
+                'conference': [
+                    {x: 25, y: 80, width: 50, height: 20}, // lectern area (expanded)
+                    {x: 15, y: 5, width: 70, height: 35}, // screen area (expanded)
+                    {x: 45, y: 80, width: 10, height: 15}, // microphone area (expanded)
+                    {x: 5, y: 90, width: 25, height: 10}, // chair1 area
+                    {x: 70, y: 90, width: 25, height: 10}, // chair2 area
+                    {x: 0, y: 85, width: 25, height: 15}, // table area
+                    {x: 90, y: 75, width: 10, height: 25}, // plant area
+                ],
+                'theater': [
+                    {x: 0, y: 85, width: 100, height: 15}, // stage lip (expanded)
+                    {x: 5, y: 5, width: 25, height: 15}, // piano area (expanded)
+                    {x: 75, y: 5, width: 25, height: 15}, // flowers area (expanded)
+                    {x: 15, y: 10, width: 15, height: 15}, // spotlight areas
+                    {x: 70, y: 10, width: 15, height: 15},
+                    {x: 0, y: 20, width: 10, height: 10}, // mask areas
+                    {x: 90, y: 20, width: 10, height: 10},
+                ],
+                'stadium': [
+                    {x: 40, y: 50, width: 20, height: 15}, // ball area (expanded)
+                    {x: 25, y: 5, width: 50, height: 15}, // scoreboard (expanded)
+                    {x: 0, y: 40, width: 10, height: 30}, // goalpost areas
+                    {x: 90, y: 40, width: 10, height: 30},
+                    {x: 5, y: 0, width: 15, height: 12}, // flag areas
+                    {x: 80, y: 0, width: 15, height: 12},
+                ],
+                'concert': [
+                    {x: 20, y: 80, width: 60, height: 20}, // stage area (expanded)
+                    {x: 5, y: 70, width: 20, height: 30}, // speaker areas
+                    {x: 75, y: 70, width: 20, height: 30},
+                    {x: 55, y: 80, width: 20, height: 20}, // drums area
+                    {x: 30, y: 80, width: 15, height: 20}, // guitar area
+                    {x: 45, y: 80, width: 10, height: 20}, // microphone area
+                ],
+                'classroom': [
+                    {x: 15, y: 15, width: 70, height: 35}, // blackboard (expanded)
+                    {x: 10, y: 75, width: 25, height: 25}, // desk areas (expanded)
+                    {x: 65, y: 75, width: 25, height: 25},
+                    {x: 5, y: 75, width: 15, height: 15}, // globe area
+                    {x: 80, y: 75, width: 15, height: 15}, // books area
+                    {x: 85, y: 10, width: 15, height: 15}, // clock area
+                ],
+                'boardroom': [
+                    {x: 15, y: 70, width: 70, height: 30}, // table large (expanded)
+                    {x: 10, y: 65, width: 20, height: 25}, // chair areas
+                    {x: 70, y: 65, width: 20, height: 25},
+                    {x: 40, y: 20, width: 20, height: 15}, // projector area
+                    {x: 20, y: 5, width: 60, height: 25}, // screen area
+                    {x: 40, y: 60, width: 20, height: 15}, // coffee area
+                ],
+                'wedding': [
+                    {x: 35, y: 80, width: 30, height: 20}, // altar area (expanded)
+                    {x: 15, y: 85, width: 15, height: 15}, // flower areas
+                    {x: 70, y: 85, width: 15, height: 15},
+                    {x: 30, y: 70, width: 40, height: 30}, // arch area
+                    {x: 25, y: 90, width: 50, height: 10}, // carpet area
+                    {x: 45, y: 65, width: 10, height: 15}, // candles area
+                ],
+                'courtroom': [
+                    {x: 25, y: 75, width: 50, height: 25}, // judge bench (expanded)
+                    {x: 45, y: 60, width: 10, height: 15}, // gavel area
+                    {x: 5, y: 10, width: 20, height: 15}, // flag area
+                    {x: 10, y: 80, width: 20, height: 20}, // witness stand
+                    {x: 70, y: 80, width: 30, height: 20}, // jury box
+                    {x: 48, y: 60, width: 10, height: 15}, // scales area
+                ],
+                'nightclub': [
+                    {x: 30, y: 80, width: 40, height: 20}, // dj booth (expanded)
+                    {x: 40, y: 15, width: 20, height: 20}, // disco ball area
+                    {x: 0, y: 85, width: 30, height: 15}, // bar area
+                    {x: 15, y: 90, width: 70, height: 10}, // dance floor
+                    {x: 5, y: 75, width: 15, height: 25}, // speaker areas
+                    {x: 80, y: 75, width: 15, height: 25},
+                ]
+            };
+            
+            return sceneProps[sceneType] || [];
+        }
+        
+        function generateNonOverlappingPosition(occupiedPositions, propPositions) {
+            // 根据屏幕大小调整角色尺寸
+            const isMobile = window.innerWidth <= 768;
+            const charWidth = isMobile ? 8.4 : 11.2; // 手机端较小
+            const charHeight = isMobile ? 10.8 : 14.4;
+            const minDistanceChars = isMobile ? 18 : 25; // 大幅增加角色间距
+            const minDistanceProps = isMobile ? 12 : 18; // 与道具的距离
+            
+            let attempts = 0;
+            let position;
+            
+            do {
+                position = {
+                    x: Math.random() * (85 - charWidth) + 7.5, // 进一步缩小生成范围，留出更多边界
+                    y: Math.random() * (85 - charHeight) + 7.5,
+                    width: charWidth,
+                    height: charHeight
+                };
+                attempts++;
+            } while (attempts < 200 && ( // 增加更多尝试次数
+                isOverlapping(position, occupiedPositions, minDistanceChars) ||
+                isOverlapping(position, propPositions, minDistanceProps)
+            ));
+            
+            // 如果经过多次尝试仍然找不到合适位置，使用网格布局作为备选
+            if (attempts >= 200 && occupiedPositions.length > 0) {
+                position = findGridPosition(occupiedPositions, propPositions, charWidth, charHeight);
+            }
+            
+            return position;
+        }
+        
+        function isOverlapping(newPos, existingPositions, minDistance) {
+            return existingPositions.some(pos => {
+                // 使用更保守的矩形重叠检测
+                const left1 = newPos.x - minDistance / 2;
+                const right1 = newPos.x + newPos.width + minDistance / 2;
+                const top1 = newPos.y - minDistance / 2;
+                const bottom1 = newPos.y + newPos.height + minDistance / 2;
+                
+                const left2 = pos.x - minDistance / 2;
+                const right2 = pos.x + (pos.width || 0) + minDistance / 2;
+                const top2 = pos.y - minDistance / 2;
+                const bottom2 = pos.y + (pos.height || 0) + minDistance / 2;
+                
+                // 检查是否重叠
+                return !(right1 < left2 || left1 > right2 || bottom1 < top2 || top1 > bottom2);
+            });
+        }
+        
+        function findGridPosition(occupiedPositions, propPositions, charWidth, charHeight) {
+            const isMobile = window.innerWidth <= 768;
+            const gridSize = isMobile ? 20 : 15; // 网格大小
+            const minDistanceChars = isMobile ? 18 : 25;
+            const minDistanceProps = isMobile ? 12 : 18;
+            
+            // 创建网格点
+            const gridPositions = [];
+            for (let x = 10; x < 80; x += gridSize) {
+                for (let y = 10; y < 80; y += gridSize) {
+                    const position = {
+                        x: x,
+                        y: y,
+                        width: charWidth,
+                        height: charHeight
+                    };
+                    
+                    // 检查这个网格位置是否可用
+                    if (!isOverlapping(position, occupiedPositions, minDistanceChars) &&
+                        !isOverlapping(position, propPositions, minDistanceProps)) {
+                        gridPositions.push(position);
+                    }
+                }
+            }
+            
+            // 如果有可用的网格位置，随机选择一个
+            if (gridPositions.length > 0) {
+                return gridPositions[Math.floor(Math.random() * gridPositions.length)];
+            }
+            
+            // 如果没有可用位置，返回一个默认位置（边缘位置）
+            return {
+                x: 10 + Math.random() * 20,
+                y: 10 + Math.random() * 20,
+                width: charWidth,
+                height: charHeight
+            };
+        }
+        
+        function validateCharacterPositions(positions) {
+            const isMobile = window.innerWidth <= 768;
+            const minDistance = isMobile ? 18 : 25;
+            let overlaps = 0;
+            
+            for (let i = 0; i < positions.length; i++) {
+                for (let j = i + 1; j < positions.length; j++) {
+                    if (isOverlapping(positions[i], [positions[j]], minDistance)) {
+                        overlaps++;
+                        // 如果发现重叠，尝试调整位置
+                        adjustOverlappingPosition(positions[j], positions, j);
+                    }
+                }
+            }
+            
+            if (overlaps > 0 && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+                console.warn(`发现 ${overlaps} 个重叠，已尝试调整位置`);
+            }
+        }
+        
+        function adjustOverlappingPosition(position, allPositions, currentIndex) {
+            const isMobile = window.innerWidth <= 768;
+            const minDistance = isMobile ? 18 : 25;
+            
+            // 尝试在当前位置附近找到一个不重叠的位置
+            const attempts = 20;
+            for (let i = 0; i < attempts; i++) {
+                const newPos = {
+                    x: position.x + (Math.random() - 0.5) * 30,
+                    y: position.y + (Math.random() - 0.5) * 30,
+                    width: position.width,
+                    height: position.height
+                };
+                
+                // 确保在边界内
+                newPos.x = Math.max(5, Math.min(85 - newPos.width, newPos.x));
+                newPos.y = Math.max(5, Math.min(85 - newPos.height, newPos.y));
+                
+                // 检查是否与其他角色重叠
+                const otherPositions = allPositions.filter((_, index) => index !== currentIndex);
+                if (!isOverlapping(newPos, otherPositions, minDistance)) {
+                    // 更新位置
+                    position.x = newPos.x;
+                    position.y = newPos.y;
+                    
+                    // 更新DOM元素位置
+                    const characters = document.querySelectorAll('.character');
+                    if (characters[currentIndex]) {
+                        characters[currentIndex].style.left = `${newPos.x}%`;
+                        characters[currentIndex].style.top = `${newPos.y}%`;
+                    }
+                    break;
+                }
+            }
         }
         
         function setupMicrophone() {
@@ -843,8 +2609,6 @@
                     microphone.connect(analyser);
 
                     isMicActive = true;
-                    startButton.textContent = '🛑 停止模拟 & 关闭麦克风';
-                    startButton.classList.add('active');
                     micStatus.textContent = "🎙️ 麦克风正在监听...";
                     micStatus.classList.add('active');
                     
@@ -864,8 +2628,6 @@
                 audioContext.close();
             }
             isMicActive = false;
-            startButton.textContent = '🎙️ 启动模拟 & 开启麦克风';
-            startButton.classList.remove('active');
             micStatus.textContent = "🔇 麦克风已关闭";
             micStatus.classList.remove('active');
         }
@@ -891,41 +2653,30 @@
             const characters = document.querySelectorAll('.character');
             if (characters.length === 0) return;
 
-            // 根据情绪调整反应概率
-            const moodMultipliers = {
-                'neutral': 0.6,
-                'excited': 0.9,
-                'bored': 0.2,
-                'angry': 0.8,
-                'sad': 0.3,
-                'surprised': 0.95
-            };
-
-            const reactionProbability = moodMultipliers[currentMood] || 0.6;
+            // 固定的反应概率，不依赖情绪
+            const reactionProbability = 0.7;
+            
+            // 定义反应动作类型
+            const reactionTypes = ['reaction-scale', 'reaction-nod', 'reaction-shake', 'reaction-wave-left', 'reaction-wave-right', 'reaction-hands-up', 'reaction-sway'];
             
             characters.forEach(char => {
                 if (Math.random() < reactionProbability) {
-                    char.classList.add('reacting');
+                    // 清除之前的反应类
+                    reactionTypes.forEach(type => char.classList.remove(type));
                     
-                    // 根据情绪添加不同的反应效果
-                    if (currentMood === 'excited') {
-                        char.style.transform += ' rotate(' + (Math.random() * 20 - 10) + 'deg)';
-                    } else if (currentMood === 'angry') {
-                        char.style.filter = 'hue-rotate(0deg) saturate(1.5)';
-                    } else if (currentMood === 'surprised') {
-                        char.style.transform += ' scale(1.3)';
-                    }
+                    // 随机选择一个反应动作
+                    const randomReaction = reactionTypes[Math.floor(Math.random() * reactionTypes.length)];
+                    char.classList.add('reacting', randomReaction);
                 }
             });
 
             reactionTimeout = setTimeout(() => {
                 characters.forEach(char => {
                     char.classList.remove('reacting');
-                    char.style.transform = '';
-                    char.style.filter = '';
+                    reactionTypes.forEach(type => char.classList.remove(type));
                 });
                 reactionTimeout = null;
-            }, 800);
+            }, 2500); // 增加动画时长，使其更真实
         }
 
         function updateSensitivity() {
@@ -943,27 +2694,91 @@
             });
         }
 
+        function randomizeAudience() {
+            let totalCount = 0;
+            const maxTotal = 20; // 减少到20以确保有足够空间不重叠
+            const assignments = [];
+            
+            // 先随机分配，确保总数不超过20
+            characterTypes.forEach(char => {
+                const maxForThis = Math.min(8, maxTotal - totalCount); // 每个角色最多8个
+                const randomValue = Math.floor(Math.random() * (maxForThis + 1));
+                assignments.push({ char, value: randomValue });
+                totalCount += randomValue;
+            });
+            
+            // 如果还有剩余容量，随机分配给某些角色
+            while (totalCount < maxTotal) {
+                const availableChars = assignments.filter(a => a.value < 8);
+                if (availableChars.length === 0) break;
+                
+                const randomChar = availableChars[Math.floor(Math.random() * availableChars.length)];
+                const canAdd = Math.min(8 - randomChar.value, maxTotal - totalCount);
+                if (canAdd > 0) {
+                    const addAmount = Math.floor(Math.random() * canAdd) + 1;
+                    randomChar.value += addAmount;
+                    totalCount += addAmount;
+                }
+            }
+            
+            // 应用分配结果
+            assignments.forEach(assignment => {
+                const slider = document.getElementById(`${assignment.char.id}-count`);
+                const valueDisplay = document.getElementById(`${assignment.char.id}-value`);
+                slider.value = assignment.value;
+                valueDisplay.textContent = assignment.value;
+            });
+            
+            generateAudience();
+        }
+        
+        function toggleDrawer() {
+            const controls = document.getElementById('controls');
+            const audienceContainer = document.getElementById('audience-container');
+            const toggleButton = document.getElementById('drawer-toggle');
+            
+            controls.classList.toggle('collapsed');
+            audienceContainer.classList.toggle('controls-open');
+            
+            // 更新按钮图标
+            if (controls.classList.contains('collapsed')) {
+                toggleButton.innerHTML = '☰';
+                toggleButton.classList.add('controls-collapsed');
+            } else {
+                toggleButton.innerHTML = '✕';
+                toggleButton.classList.remove('controls-collapsed');
+            }
+        }
+        
         function initialize() {
             createSliders();
             document.querySelectorAll('.char-slider').forEach(slider => {
                 slider.addEventListener('input', updateSliderValue);
             });
+            document.getElementById('random-audience').addEventListener('click', randomizeAudience);
+            document.getElementById('drawer-toggle').addEventListener('click', toggleDrawer);
             sceneSelect.addEventListener('change', updateScene);
             moodSelect.addEventListener('change', updateMood);
             sensitivitySlider.addEventListener('input', updateSensitivity);
-            startButton.addEventListener('click', () => {
-                if (isMicActive) {
-                    stopMicrophone();
-                } else {
-                    setupMicrophone();
-                }
+            
+            // 窗口大小变化时重新生成观众位置
+            window.addEventListener('resize', () => {
+                setTimeout(generateAudience, 100); // 延迟一点确保CSS更新完成
             });
+            
+            // 初始化界面状态
             updateScene();
             updateSensitivity();
+            
+            // 设置初始状态 - 控制面板展开
+            document.getElementById('audience-container').classList.add('controls-open');
+            document.getElementById('drawer-toggle').innerHTML = '✕';
+            
+            // 自动启动麦克风
+            setupMicrophone();
         }
 
         document.addEventListener('DOMContentLoaded', initialize);
     </script>
 </body>
 </html>
-
