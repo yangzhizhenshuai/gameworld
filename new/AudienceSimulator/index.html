@@ -1212,7 +1212,7 @@
         .char-head {
             width: 56px;
             height: 48px;
-            top: 16px;
+            top: 8px;
             background-color: var(--skin-tone-2);
             border-radius: 12px;
             position: relative;
@@ -1323,7 +1323,7 @@
         .char-hair {
             width: 64px;
             height: 32px;
-            top: 4px;
+            top: -4px;
             background-color: var(--hair-dark);
             border-radius: 16px 16px 8px 8px;
             border: 2px solid rgba(0, 0, 0, 0.2);
@@ -1332,13 +1332,13 @@
         /* 不同发型样式 */
         .hair-short .char-hair {
             height: 24px;
-            top: 8px;
+            top: 0px;
             border-radius: 12px 12px 6px 6px;
         }
         
         .hair-long .char-hair {
             height: 40px;
-            top: 0;
+            top: -8px;
             border-radius: 20px 20px 10px 10px;
         }
         
@@ -1602,7 +1602,7 @@
         .old-man .char-head::before, .old-woman .char-head::before {
             content: '';
             position: absolute;
-            top: 10px;
+            top: 12px;
             left: 8px;
             width: 40px;
             height: 1px;
@@ -1851,11 +1851,11 @@
         
         @keyframes reactionNodHead {
             0%, 100% { transform: translateX(-50%) translateY(0); }
-            12% { transform: translateX(-50%) translateY(-8px); }
+            12% { transform: translateX(-50%) translateY(-6px); }
             24% { transform: translateX(-50%) translateY(0); }
-            36% { transform: translateX(-50%) translateY(-8px); }
+            36% { transform: translateX(-50%) translateY(-6px); }
             48% { transform: translateX(-50%) translateY(0); }
-            60% { transform: translateX(-50%) translateY(-8px); }
+            60% { transform: translateX(-50%) translateY(-6px); }
             72% { transform: translateX(-50%) translateY(0); }
         }
         
@@ -2657,7 +2657,7 @@
             const reactionProbability = 0.7;
             
             // 定义反应动作类型
-            const reactionTypes = ['reaction-scale', 'reaction-nod', 'reaction-shake', 'reaction-wave-left', 'reaction-wave-right', 'reaction-hands-up', 'reaction-sway'];
+            const reactionTypes = ['reaction-nod'];
             
             characters.forEach(char => {
                 if (Math.random() < reactionProbability) {
@@ -2782,3 +2782,4 @@
     </script>
 </body>
 </html>
+
