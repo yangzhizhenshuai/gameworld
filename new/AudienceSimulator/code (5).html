@@ -1,0 +1,969 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>观众模拟器 (增强版)</title>
+    <style>
+        :root {
+            --bg-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --controls-bg: rgba(255, 255, 255, 0.95);
+            --text-color: #2c3e50;
+            --separator-color: #e0e6ed;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            
+            /* Character Colors */
+            --char-boy: #3498db;
+            --char-girl: #e91e63;
+            --char-young-man: #2ecc71;
+            --char-young-woman: #f1c40f;
+            --char-middle-man-suit: #34495e;
+            --char-middle-man-shirt: #ecf0f1;
+            --char-middle-woman: #8e44ad;
+            --char-old-man: #7f8c8d;
+            --char-old-woman: #bdc3c7;
+            
+            --hair-dark: #2C3A47;
+            --hair-grey: #95a5a6;
+            --skin-tone: #f39c12;
+            
+            /* New Scene Colors */
+            --neon-blue: #00d4ff;
+            --neon-pink: #ff0080;
+            --neon-green: #00ff88;
+            --gold: #ffd700;
+            --silver: #c0c0c0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            background: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        #controls {
+            width: 320px;
+            padding: 25px;
+            background: var(--controls-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+            border-radius: 0 20px 20px 0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+            position: relative;
+        }
+        
+        #controls::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            pointer-events: none;
+            border-radius: 0 20px 20px 0;
+        }
+
+        #controls h2, #controls h3 {
+            margin-top: 0;
+            border-bottom: 2px solid var(--separator-color);
+            padding-bottom: 12px;
+            position: relative;
+            background: linear-gradient(135deg, var(--accent-color), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+        }
+        
+        #controls h2 {
+            font-size: 1.4em;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        #controls h3 {
+            margin-top: 25px;
+            font-size: 1.1em;
+            position: relative;
+        }
+        
+        #controls h3::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
+            border-radius: 2px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .control-group:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .control-group select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid var(--separator-color);
+            border-radius: 8px;
+            background: white;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 10px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+        }
+        
+        .control-group select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--separator-color);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            transition: all 0.3s ease;
+        }
+        
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .control-group input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .control-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .char-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .char-color-box {
+            width: 18px;
+            height: 18px;
+            display: inline-block;
+            margin-right: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .char-color-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .char-value {
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+            font-size: 1.1em;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        #audience-container {
+            flex-grow: 1;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            transition: background 0.5s ease;
+            overflow: hidden;
+        }
+        
+        /* --- Enhanced Scene Styles --- */
+        #audience-container.conference { 
+            background: linear-gradient(to bottom, #6a89cc 0%, #4a69bd 70%);
+        }
+        #audience-container.theater {
+            background: radial-gradient(circle at 50% 0%, #f7d794 0%, #d63031 90%);
+        }
+        #audience-container.stadium {
+            background: linear-gradient(to bottom, 
+                #82ccdd 0%, #82ccdd 50%, /* Sky */
+                #b8e994 50%, #b8e994 55%, /* Stands Far */
+                #d63031 55%, #d63031 60%, /* Track */
+                #6ab04c 60%, #6ab04c 100%  /* Field */
+            );
+        }
+        
+        /* New Scene Styles */
+        #audience-container.concert {
+            background: 
+                radial-gradient(circle at 50% 100%, #ff006e 0%, #8338ec 40%, #3a0ca3 100%),
+                linear-gradient(to top, #000 0%, transparent 50%);
+            position: relative;
+        }
+        
+        #audience-container.concert::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, var(--neon-blue) 0%, transparent 2%),
+                radial-gradient(circle at 80% 30%, var(--neon-pink) 0%, transparent 2%),
+                radial-gradient(circle at 60% 70%, var(--neon-green) 0%, transparent 2%);
+            animation: concertLights 3s infinite;
+        }
+        
+        @keyframes concertLights {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.4; }
+        }
+        
+        #audience-container.classroom {
+            background: linear-gradient(to bottom, #e8f5e8 0%, #c8e6c9 50%, #a5d6a7 100%);
+        }
+        
+        #audience-container.boardroom {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+        }
+        
+        #audience-container.wedding {
+            background: 
+                linear-gradient(to bottom, #ffeaa7 0%, #fab1a0 50%, #fd79a8 100%),
+                radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
+        }
+        
+        #audience-container.courtroom {
+            background: linear-gradient(to bottom, #8b4513 0%, #654321 50%, #8b4513 100%);
+        }
+        
+        #audience-container.nightclub {
+            background: 
+                linear-gradient(45deg, #000 0%, #1a1a2e 50%, #16213e 100%),
+                radial-gradient(circle at 30% 80%, rgba(255, 0, 128, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 70% 20%, rgba(0, 212, 255, 0.3) 0%, transparent 50%);
+            animation: nightclubPulse 2s infinite alternate;
+        }
+        
+        @keyframes nightclubPulse {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.2); }
+        }
+
+        #scene-foreground {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Make it non-interactive */
+        }
+        
+        .conference #scene-foreground::before { /* Lectern */
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 30%;
+            width: 40%;
+            height: 15%;
+            background-color: #3B3B3B;
+            border-top: 5px solid #2C2C2C;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .theater #scene-foreground::before { /* Stage Lip */
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 10%;
+            background-color: #833471;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.4);
+        }
+
+        .audience-area {
+            position: absolute;
+            perspective: 800px;
+        }
+
+        .conference .audience-area { top: 40%; left: 15%; width: 70%; height: 45%; }
+        .theater .audience-area { top: 30%; left: 10%; width: 80%; height: 60%; transform: rotateX(25deg); }
+        .stadium .audience-area { top: 25%; left: 5%; width: 90%; height: 30%; transform: rotateX(40deg); }
+        .concert .audience-area { top: 20%; left: 10%; width: 80%; height: 70%; transform: rotateX(15deg); }
+        .classroom .audience-area { top: 35%; left: 20%; width: 60%; height: 50%; transform: rotateX(10deg); }
+        .boardroom .audience-area { top: 45%; left: 25%; width: 50%; height: 40%; }
+        .wedding .audience-area { top: 30%; left: 15%; width: 70%; height: 55%; transform: rotateX(20deg); }
+        .courtroom .audience-area { top: 40%; left: 20%; width: 60%; height: 45%; transform: rotateX(15deg); }
+        .nightclub .audience-area { top: 25%; left: 15%; width: 70%; height: 65%; transform: rotateX(20deg); }
+
+        /* --- Enhanced Character Styles --- */
+        .character {
+            position: absolute;
+            width: 28px;
+            height: 36px;
+            animation: fidget 10s infinite;
+            transition: all 0.3s ease-out;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+        
+        .character:hover {
+            transform: scale(1.1) translateY(-2px);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .char-head, .char-hair, .char-body {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .char-head {
+            width: 14px;
+            height: 12px;
+            top: 4px;
+            background-color: var(--skin-tone);
+            border-radius: 3px;
+            /* Eyes using box-shadow */
+            box-shadow: 3px 4px 0 1px #000, 8px 4px 0 1px #000;
+            position: relative;
+        }
+        
+        .char-head::before {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 1px;
+            background-color: #000;
+            border-radius: 1px;
+        }
+        
+        .char-hair {
+            width: 16px;
+            height: 8px;
+            top: 1px;
+            background-color: var(--hair-dark);
+            border-radius: 4px 4px 2px 2px;
+        }
+        
+        .char-body {
+            width: 20px;
+            height: 20px;
+            bottom: 0;
+            border-radius: 4px;
+            position: relative;
+        }
+        
+        .char-body::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 2px;
+            width: 6px;
+            height: 4px;
+            background-color: inherit;
+            border-radius: 2px;
+        }
+        
+        .char-body::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            right: 2px;
+            width: 6px;
+            height: 4px;
+            background-color: inherit;
+            border-radius: 2px;
+        }
+        
+        /* Character specific body colors */
+        .boy .char-body { background-color: var(--char-boy); }
+        .girl .char-body { background-color: var(--char-girl); }
+        .young-man .char-body { background-color: var(--char-young-man); }
+        .young-woman .char-body { background-color: var(--char-young-woman); }
+        .middle-woman .char-body { background-color: var(--char-middle-woman); }
+        .old-man .char-body { background-color: var(--char-old-man); }
+        .old-woman .char-body { background-color: var(--char-old-woman); }
+
+        /* Special character styles */
+        .old-man .char-hair, .old-woman .char-hair {
+            background-color: var(--hair-grey);
+        }
+        
+        .middle-man .char-body {
+            background-color: var(--char-middle-man-suit);
+        }
+        
+        /* Override default pseudo-elements for middle-man */
+        .middle-man .char-body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 10px 8px 0 8px;
+            border-color: var(--char-middle-man-shirt) transparent transparent transparent;
+        }
+        
+        .middle-man .char-body::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 2px;
+            width: 6px;
+            height: 4px;
+            background-color: var(--char-middle-man-suit);
+            border-radius: 2px;
+        }
+        
+        /* Add some sparkle effects for special characters */
+        .young-woman .char-hair::before {
+            content: '✨';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            font-size: 8px;
+            animation: sparkle 2s infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        
+        /* Mood-based character styles */
+        .character.mood-excited {
+            animation: excited 2s infinite;
+        }
+        
+        .character.mood-bored {
+            filter: grayscale(0.5) brightness(0.8);
+            animation: bored 5s infinite;
+        }
+        
+        .character.mood-angry {
+            filter: hue-rotate(0deg) saturate(1.5) brightness(1.2);
+            animation: angry 1s infinite;
+        }
+        
+        .character.mood-sad {
+            filter: grayscale(0.3) brightness(0.7);
+            animation: sad 3s infinite;
+        }
+        
+        .character.mood-surprised {
+            animation: surprised 1.5s infinite;
+        }
+        
+        @keyframes excited {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-3px) scale(1.05); }
+        }
+        
+        @keyframes bored {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(2px) rotate(-2deg); }
+        }
+        
+        @keyframes angry {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+        
+        @keyframes sad {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(1px); }
+        }
+        
+        @keyframes surprised {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Animations */
+        @keyframes fidget {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(1px, -1px) rotate(-1deg); }
+            50% { transform: translate(-1px, 1px) rotate(1deg); }
+            75% { transform: translate(1px, 1px) rotate(0deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        
+        .reacting {
+            transform: scale(1.2) translateY(-8px) !important;
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4)) brightness(1.2);
+            animation: reaction 0.5s ease-out;
+        }
+        
+        @keyframes reaction {
+            0% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.3) translateY(-12px) rotate(5deg); }
+            100% { transform: scale(1.2) translateY(-8px); }
+        }
+        
+        #startButton {
+            padding: 15px 25px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--success-color), var(--neon-green));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            margin-top: auto;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        #startButton::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        #startButton:hover::before {
+            left: 100%;
+        }
+        
+        #startButton:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+        }
+        
+        #startButton.active {
+            background: linear-gradient(135deg, var(--danger-color), #ff6b6b);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        #startButton.active:hover {
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+        
+        #mic-status {
+            text-align: center;
+            padding: 15px;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #mic-status::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: statusShimmer 3s infinite;
+        }
+        
+        @keyframes statusShimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        #mic-status.active {
+            border-color: var(--success-color);
+            background: rgba(46, 204, 113, 0.1);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(46, 204, 113, 0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="controls">
+        <h2>控制面板</h2>
+
+        <div class="control-group">
+            <label for="scene-select">🎭 选择场景:</label>
+            <select id="scene-select">
+                <option value="conference">🏢 会议室</option>
+                <option value="theater">🎭 剧院</option>
+                <option value="stadium">🏟️ 体育场</option>
+                <option value="concert">🎵 音乐会</option>
+                <option value="classroom">🎓 教室</option>
+                <option value="boardroom">💼 董事会</option>
+                <option value="wedding">💒 婚礼</option>
+                <option value="courtroom">⚖️ 法庭</option>
+                <option value="nightclub">🌙 夜店</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label for="mood-select">😊 观众情绪:</label>
+            <select id="mood-select">
+                <option value="neutral">😐 中性</option>
+                <option value="excited">😆 兴奋</option>
+                <option value="bored">😴 无聊</option>
+                <option value="angry">😠 愤怒</option>
+                <option value="sad">😢 悲伤</option>
+                <option value="surprised">😲 惊讶</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label for="reaction-sensitivity">🎚️ 反应敏感度: <span id="sensitivity-value">50</span>%</label>
+            <input type="range" id="reaction-sensitivity" min="10" max="100" value="50">
+        </div>
+
+        <h3>观众构成</h3>
+        
+        <div id="character-sliders">
+            <!-- Sliders will be dynamically inserted here -->
+        </div>
+        
+        <div id="mic-status">🔇 麦克风已关闭</div>
+        
+        <button id="startButton">🎙️ 启动模拟 & 开启麦克风</button>
+
+    </div>
+
+    <div id="audience-container">
+        <div id="scene-foreground"></div>
+        <div class="audience-area"></div>
+    </div>
+
+    <script>
+        const sceneSelect = document.getElementById('scene-select');
+        const moodSelect = document.getElementById('mood-select');
+        const sensitivitySlider = document.getElementById('reaction-sensitivity');
+        const sensitivityValue = document.getElementById('sensitivity-value');
+        const audienceContainer = document.getElementById('audience-container');
+        const audienceArea = document.querySelector('.audience-area');
+        const characterSlidersContainer = document.getElementById('character-sliders');
+        const startButton = document.getElementById('startButton');
+        const micStatus = document.getElementById('mic-status');
+
+        const characterTypes = [
+            { id: 'boy', name: '👦 小男孩', color: 'var(--char-boy)' },
+            { id: 'girl', name: '👧 小女孩', color: 'var(--char-girl)' },
+            { id: 'young-man', name: '🧑 年轻男士', color: 'var(--char-young-man)' },
+            { id: 'young-woman', name: '👩 年轻女士', color: 'var(--char-young-woman)' },
+            { id: 'middle-man', name: '👨‍💼 中年西装男', color: 'var(--char-middle-man-suit)' },
+            { id: 'middle-woman', name: '👩‍💼 中年女士', color: 'var(--char-middle-woman)' },
+            { id: 'old-man', name: '👴 老年男士', color: 'var(--char-old-man)' },
+            { id: 'old-woman', name: '👵 老年女士', color: 'var(--char-old-woman)' }
+        ];
+
+        let audioContext, analyser, microphone, isMicActive = false, reactionTimeout = null;
+        let currentMood = 'neutral', reactionSensitivity = 50;
+
+        function createSliders() {
+            let html = '';
+            characterTypes.forEach(char => {
+                html += `
+                    <div class="control-group">
+                        <label for="${char.id}-count" class="char-label">
+                            <div>
+                                <span class="char-color-box" style="background-color: ${char.color};"></span>
+                                ${char.name}
+                            </div>
+                            <span id="${char.id}-value" class="char-value">0</span>
+                        </label>
+                        <input type="range" id="${char.id}-count" class="char-slider" min="0" max="20" value="0" data-char-id="${char.id}">
+                    </div>
+                `;
+            });
+            characterSlidersContainer.innerHTML = html;
+        }
+
+        function updateSliderValue(e) {
+            document.getElementById(`${e.target.dataset.charId}-value`).textContent = e.target.value;
+            generateAudience();
+        }
+
+        function updateScene() {
+            audienceContainer.className = sceneSelect.value;
+            generateAudience();
+        }
+
+        function generateAudience() {
+            audienceArea.innerHTML = '';
+            const audienceList = [];
+
+            characterTypes.forEach(char => {
+                const count = parseInt(document.getElementById(`${char.id}-count`).value, 10);
+                for (let i = 0; i < count; i++) {
+                    audienceList.push(char.id);
+                }
+            });
+
+            for (let i = audienceList.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [audienceList[i], audienceList[j]] = [audienceList[j], audienceList[i]];
+            }
+
+            audienceList.forEach(charId => {
+                const charElement = document.createElement('div');
+                charElement.classList.add('character', charId);
+                
+                // --- NEW: Add inner HTML structure for detailed character ---
+                charElement.innerHTML = `
+                    <div class="char-hair"></div>
+                    <div class="char-head"></div>
+                    <div class="char-body"></div>
+                `;
+                
+                charElement.style.left = `${Math.random() * 95}%`;
+                charElement.style.top = `${Math.random() * 95}%`;
+                charElement.style.animationDelay = `${Math.random() * -10}s`;
+
+                audienceArea.appendChild(charElement);
+            });
+        }
+        
+        function setupMicrophone() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert('抱歉，您的浏览器不支持麦克风输入。');
+                return;
+            }
+
+            navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+                .then(stream => {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioContext.createAnalyser();
+                    microphone = audioContext.createMediaStreamSource(stream);
+                    
+                    analyser.fftSize = 256;
+                    const bufferLength = analyser.frequencyBinCount;
+                    const dataArray = new Uint8Array(bufferLength);
+                    
+                    microphone.connect(analyser);
+
+                    isMicActive = true;
+                    startButton.textContent = '🛑 停止模拟 & 关闭麦克风';
+                    startButton.classList.add('active');
+                    micStatus.textContent = "🎙️ 麦克风正在监听...";
+                    micStatus.classList.add('active');
+                    
+                    checkVolume(dataArray, bufferLength);
+                })
+                .catch(err => {
+                    alert('无法访问麦克风。请确保已授予权限。');
+                    console.error('getUserMedia error:', err);
+                });
+        }
+        
+        function stopMicrophone() {
+            if (microphone && microphone.mediaStream) {
+                microphone.mediaStream.getTracks().forEach(track => track.stop());
+            }
+            if (audioContext) {
+                audioContext.close();
+            }
+            isMicActive = false;
+            startButton.textContent = '🎙️ 启动模拟 & 开启麦克风';
+            startButton.classList.remove('active');
+            micStatus.textContent = "🔇 麦克风已关闭";
+            micStatus.classList.remove('active');
+        }
+
+        function checkVolume(dataArray, bufferLength) {
+            if (!isMicActive) return;
+
+            analyser.getByteFrequencyData(dataArray);
+            let sum = dataArray.reduce((a, b) => a + b, 0);
+            let average = sum / bufferLength;
+
+            // 使用敏感度设置调整触发阈值
+            const threshold = 100 - reactionSensitivity;
+            
+            if (average > threshold && !reactionTimeout) {
+                triggerReaction();
+            }
+
+            requestAnimationFrame(() => checkVolume(dataArray, bufferLength));
+        }
+
+        function triggerReaction() {
+            const characters = document.querySelectorAll('.character');
+            if (characters.length === 0) return;
+
+            // 根据情绪调整反应概率
+            const moodMultipliers = {
+                'neutral': 0.6,
+                'excited': 0.9,
+                'bored': 0.2,
+                'angry': 0.8,
+                'sad': 0.3,
+                'surprised': 0.95
+            };
+
+            const reactionProbability = moodMultipliers[currentMood] || 0.6;
+            
+            characters.forEach(char => {
+                if (Math.random() < reactionProbability) {
+                    char.classList.add('reacting');
+                    
+                    // 根据情绪添加不同的反应效果
+                    if (currentMood === 'excited') {
+                        char.style.transform += ' rotate(' + (Math.random() * 20 - 10) + 'deg)';
+                    } else if (currentMood === 'angry') {
+                        char.style.filter = 'hue-rotate(0deg) saturate(1.5)';
+                    } else if (currentMood === 'surprised') {
+                        char.style.transform += ' scale(1.3)';
+                    }
+                }
+            });
+
+            reactionTimeout = setTimeout(() => {
+                characters.forEach(char => {
+                    char.classList.remove('reacting');
+                    char.style.transform = '';
+                    char.style.filter = '';
+                });
+                reactionTimeout = null;
+            }, 800);
+        }
+
+        function updateSensitivity() {
+            reactionSensitivity = parseInt(sensitivitySlider.value);
+            sensitivityValue.textContent = reactionSensitivity;
+        }
+        
+        function updateMood() {
+            currentMood = moodSelect.value;
+            // 根据情绪调整观众外观
+            const characters = document.querySelectorAll('.character');
+            characters.forEach(char => {
+                char.className = char.className.replace(/mood-\w+/g, '');
+                char.classList.add(`mood-${currentMood}`);
+            });
+        }
+
+        function initialize() {
+            createSliders();
+            document.querySelectorAll('.char-slider').forEach(slider => {
+                slider.addEventListener('input', updateSliderValue);
+            });
+            sceneSelect.addEventListener('change', updateScene);
+            moodSelect.addEventListener('change', updateMood);
+            sensitivitySlider.addEventListener('input', updateSensitivity);
+            startButton.addEventListener('click', () => {
+                if (isMicActive) {
+                    stopMicrophone();
+                } else {
+                    setupMicrophone();
+                }
+            });
+            updateScene();
+            updateSensitivity();
+        }
+
+        document.addEventListener('DOMContentLoaded', initialize);
+    </script>
+</body>
+</html>
+
