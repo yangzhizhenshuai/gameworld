@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursor解压神器 - 当AI代码助手气到你的时候</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .rage-counter {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 30px;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .rage-button {
+            background: linear-gradient(45deg, #ff4757, #ff3742);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 71, 87, 0.3);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rage-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 71, 87, 0.4);
+        }
+
+        .rage-button:active {
+            transform: translateY(0);
+        }
+
+        .rage-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .rage-button:hover::before {
+            left: 100%;
+        }
+
+        .animation-stage {
+            width: 500px;
+            height: 400px;
+            margin: 0 auto;
+            position: relative;
+            background: linear-gradient(to bottom, #87CEEB, #98FB98);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 3px solid #333;
+        }
+
+        .ceo {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 150px;
+            transition: all 0.5s ease;
+        }
+
+        .ceo-head {
+            width: 80px;
+            height: 80px;
+            background: #fdbcb4;
+            border-radius: 50%;
+            margin: 0 auto;
+            position: relative;
+            border: 2px solid #333;
+            overflow: visible;
+        }
+
+        .ceo-eyes {
+            position: absolute;
+            top: 25px;
+            left: 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .eye {
+            width: 12px;
+            height: 12px;
+            background: #333;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .eye.hurt {
+            height: 3px;
+            background: #333;
+            border-radius: 0;
+            top: 5px;
+        }
+
+        .ceo-mouth {
+            position: absolute;
+            top: 45px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 25px;
+            height: 12px;
+            border: 2px solid #333;
+            border-top: none;
+            border-radius: 0 0 25px 25px;
+        }
+
+        .ceo-mouth.crying {
+            border-radius: 0;
+            border-top: 2px solid #333;
+            border-bottom: none;
+            transform: translateX(-50%) rotate(180deg);
+            width: 30px;
+            height: 15px;
+        }
+
+        .ceo-body {
+            width: 60px;
+            height: 70px;
+            background: #4169E1;
+            margin: 5px auto;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .ceo-arms {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+        }
+
+        .arm {
+            position: absolute;
+            width: 20px;
+            height: 50px;
+            background: #fdbcb4;
+            border-radius: 10px;
+        }
+
+        .arm.left {
+            left: -15px;
+            transform: rotate(-20deg);
+        }
+
+        .arm.right {
+            right: -15px;
+            transform: rotate(20deg);
+        }
+
+        .fist {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            top: 120px;
+            left: -80px;
+            transition: all 1.5s ease;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .bruise {
+            position: absolute;
+            width: 20px;
+            height: 15px;
+            background: #4B0082;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .bruise.left-eye {
+            top: 20px;
+            left: 15px;
+            width: 25px;
+            height: 20px;
+        }
+
+        .bruise.right-eye {
+            top: 20px;
+            right: 15px;
+            width: 25px;
+            height: 20px;
+        }
+
+        .bruise.cheek {
+            bottom: 15px;
+            right: 10px;
+            width: 30px;
+            height: 25px;
+        }
+
+        .bump {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: #8B4513;
+            border-radius: 50%;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .tear {
+            position: absolute;
+            width: 8px;
+            height: 15px;
+            background: #00BFFF;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            opacity: 0;
+            top: 35px;
+            animation: tear-fall 2s ease-in-out infinite;
+        }
+
+        .tear.left {
+            left: 22px;
+        }
+
+        .tear.right {
+            right: 22px;
+        }
+
+        @keyframes tear-fall {
+            0% {
+                opacity: 0;
+                transform: translateY(0);
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+        }
+
+        .stars {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+        }
+
+        .star {
+            color: #FFD700;
+            font-size: 30px;
+            position: absolute;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes punch {
+            0% { 
+                left: -80px; 
+                transform: scale(1) rotate(0deg);
+            }
+            30% { 
+                left: calc(50% - 25px); 
+                transform: scale(1.2) rotate(-10deg);
+            }
+            50% { 
+                left: calc(50% - 25px); 
+                transform: scale(1.3) rotate(-15deg);
+            }
+            70% { 
+                left: calc(50% - 25px); 
+                transform: scale(1.1) rotate(-5deg);
+            }
+            100% { 
+                left: -80px; 
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        @keyframes ceo-hit {
+            0% { 
+                transform: translateX(-50%) rotate(0deg) scale(1);
+            }
+            20% { 
+                transform: translateX(-50%) rotate(-15deg) scale(0.9);
+            }
+            40% { 
+                transform: translateX(-50%) rotate(20deg) scale(0.8);
+            }
+            60% { 
+                transform: translateX(-50%) rotate(-10deg) scale(0.85);
+            }
+            80% { 
+                transform: translateX(-50%) rotate(5deg) scale(0.95);
+            }
+            100% { 
+                transform: translateX(-50%) rotate(0deg) scale(1);
+            }
+        }
+
+        @keyframes stage-shake {
+            0%, 100% { transform: translateX(0); }
+            10% { transform: translateX(-5px); }
+            20% { transform: translateX(5px); }
+            30% { transform: translateX(-5px); }
+            40% { transform: translateX(5px); }
+            50% { transform: translateX(-3px); }
+            60% { transform: translateX(3px); }
+            70% { transform: translateX(-2px); }
+            80% { transform: translateX(2px); }
+            90% { transform: translateX(-1px); }
+        }
+
+        @keyframes background-flash {
+            0%, 100% { background: linear-gradient(to bottom, #87CEEB, #98FB98); }
+            50% { background: linear-gradient(to bottom, #FF6B6B, #FF8E8E); }
+        }
+
+        .punching .fist {
+            animation: punch 3s ease-in-out;
+        }
+
+        .punching .ceo {
+            animation: ceo-hit 3s ease-in-out;
+        }
+
+        .punching .stars {
+            display: block;
+        }
+
+        .punching .animation-stage {
+            animation: stage-shake 0.5s ease-in-out 5;
+        }
+
+        .punching .animation-stage::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 0, 0, 0.2);
+            animation: background-flash 3s ease-in-out;
+            border-radius: 12px;
+        }
+
+        .quotes {
+            margin-top: 20px;
+            font-style: italic;
+            color: #666;
+            min-height: 30px;
+            font-size: 1.1em;
+        }
+
+        .reset-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 600px) {
+            .animation-stage {
+                width: 350px;
+                height: 300px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .rage-button {
+                font-size: 1.2em;
+                padding: 15px 30px;
+            }
+            
+            .ceo {
+                width: 80px;
+                height: 120px;
+            }
+            
+            .ceo-head {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .fist {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤬 Cursor解压神器</h1>
+        <p class="subtitle">当AI代码助手气到你的时候，来这里发泄一下吧！</p>
+        
+        <div class="rage-counter">
+            今日被气次数：<span id="rageCount">0</span> 次
+        </div>
+        
+        <button class="rage-button" id="rageBtn">
+            💥 狠揍Cursor CEO！
+        </button>
+        
+        <div class="animation-stage" id="animationStage">
+            <div class="ceo" id="ceo">
+                <div class="ceo-head">
+                    <div class="ceo-eyes">
+                        <div class="eye" id="leftEye"></div>
+                        <div class="eye" id="rightEye"></div>
+                    </div>
+                    <div class="ceo-mouth" id="ceoMouth"></div>
+                    
+                    <!-- 受伤元素 -->
+                    <div class="bruise left-eye" id="leftBruise"></div>
+                    <div class="bruise right-eye" id="rightBruise"></div>
+                    <div class="bruise cheek" id="cheekBruise"></div>
+                    <div class="bump" id="bump"></div>
+                    <div class="tear left" id="leftTear"></div>
+                    <div class="tear right" id="rightTear"></div>
+                </div>
+                <div class="ceo-body">
+                    <div class="ceo-arms">
+                        <div class="arm left"></div>
+                        <div class="arm right"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="fist" id="fist">👊</div>
+            
+            <div class="stars" id="stars">
+                <span class="star" style="top: 0; left: -30px;">⭐</span>
+                <span class="star" style="top: -15px; left: 0;">✨</span>
+                <span class="star" style="top: 0; left: 30px;">⭐</span>
+                <span class="star" style="top: 15px; left: -15px;">💫</span>
+                <span class="star" style="top: 15px; left: 15px;">✨</span>
+            </div>
+        </div>
+        
+        <div class="quotes" id="quotes">
+            点击按钮，让CEO感受你的愤怒！
+        </div>
+        
+        <button class="reset-btn" id="resetBtn">重置计数器</button>
+    </div>
+
+    <script>
+        let rageCount = 0;
+        const rageCountElement = document.getElementById('rageCount');
+        const rageBtn = document.getElementById('rageBtn');
+        const animationStage = document.getElementById('animationStage');
+        const ceo = document.getElementById('ceo');
+        const fist = document.getElementById('fist');
+        const stars = document.getElementById('stars');
+        const quotes = document.getElementById('quotes');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        // 受伤元素
+        const leftEye = document.getElementById('leftEye');
+        const rightEye = document.getElementById('rightEye');
+        const ceoMouth = document.getElementById('ceoMouth');
+        const leftBruise = document.getElementById('leftBruise');
+        const rightBruise = document.getElementById('rightBruise');
+        const cheekBruise = document.getElementById('cheekBruise');
+        const bump = document.getElementById('bump');
+        const leftTear = document.getElementById('leftTear');
+        const rightTear = document.getElementById('rightTear');
+
+        const angryQuotes = [
+            "这就是你给我写bug的下场！",
+            "代码报错？吃我一拳！",
+            "AI助手？我看是气人助手！",
+            "建议重构？先重构你的脸！",
+            "代码审查？我看你是找揍！",
+            "性能优化？优化你个头！",
+            "这就是乱改代码的代价！",
+            "AI幻觉？幻觉你个锤子！",
+            "建议升级？建议你升级挨打！",
+            "智能补全？智能补揍！",
+            "看你还敢不敢乱生成代码！",
+            "这就是你给我报错的代价！",
+            "代码格式化？我先格式化你的脸！",
+            "自动补全？自动补揍！",
+            "智能建议？建议你挨打！"
+        ];
+
+        function showInjuries() {
+            // 显示受伤的眼睛
+            leftEye.classList.add('hurt');
+            rightEye.classList.add('hurt');
+            
+            // 显示哭泣的嘴巴
+            ceoMouth.classList.add('crying');
+            
+            // 显示淤青
+            setTimeout(() => {
+                leftBruise.style.opacity = '0.8';
+                rightBruise.style.opacity = '0.8';
+                cheekBruise.style.opacity = '0.7';
+            }, 500);
+            
+            // 显示肿包
+            setTimeout(() => {
+                bump.style.opacity = '1';
+                bump.style.transform = 'translateX(-50%) scale(1.2)';
+            }, 800);
+            
+            // 显示眼泪
+            setTimeout(() => {
+                leftTear.style.opacity = '1';
+                rightTear.style.opacity = '1';
+            }, 1000);
+        }
+
+        function hideInjuries() {
+            // 隐藏所有受伤效果
+            leftEye.classList.remove('hurt');
+            rightEye.classList.remove('hurt');
+            ceoMouth.classList.remove('crying');
+            
+            leftBruise.style.opacity = '0';
+            rightBruise.style.opacity = '0';
+            cheekBruise.style.opacity = '0';
+            bump.style.opacity = '0';
+            bump.style.transform = 'translateX(-50%) scale(1)';
+            leftTear.style.opacity = '0';
+            rightTear.style.opacity = '0';
+        }
+
+        function playPunchAnimation() {
+            // 增加计数
+            rageCount++;
+            rageCountElement.textContent = rageCount;
+            
+            // 添加动画类
+            animationStage.classList.add('punching');
+            
+            // 随机选择一句愤怒语录
+            const randomQuote = angryQuotes[Math.floor(Math.random() * angryQuotes.length)];
+            quotes.textContent = randomQuote;
+            
+            // 播放音效（这里用视觉反馈代替）
+            document.body.style.background = `linear-gradient(135deg, hsl(${Math.random() * 360}, 70%, 60%) 0%, hsl(${Math.random() * 360}, 70%, 50%) 100%)`;
+            
+            // 按钮震动效果
+            rageBtn.style.animation = 'bounce 0.5s ease-in-out';
+            
+            // 在动画中段显示受伤效果
+            setTimeout(showInjuries, 1000);
+            
+            // 3秒后移除动画类和受伤效果
+            setTimeout(() => {
+                animationStage.classList.remove('punching');
+                rageBtn.style.animation = '';
+                document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                hideInjuries();
+            }, 3000);
+            
+            // 如果次数达到里程碑，显示特殊消息
+            if (rageCount === 10) {
+                setTimeout(() => {
+                    quotes.textContent = "哇！你已经气了10次了，建议休息一下！";
+                }, 3000);
+            } else if (rageCount === 50) {
+                setTimeout(() => {
+                    quotes.textContent = "50次！你确定不是该换个IDE了吗？";
+                }, 3000);
+            } else if (rageCount === 100) {
+                setTimeout(() => {
+                    quotes.textContent = "100次！恭喜你获得'最耐心的程序员'称号！";
+                }, 3000);
+            }
+        }
+
+        function resetCounter() {
+            rageCount = 0;
+            rageCountElement.textContent = rageCount;
+            quotes.textContent = "计数器已重置，继续加油揍他！";
+            hideInjuries();
+            
+            // 重置动画
+            ceo.style.animation = 'bounce 0.5s ease-in-out';
+            setTimeout(() => {
+                ceo.style.animation = '';
+            }, 500);
+        }
+
+        // 事件监听器
+        rageBtn.addEventListener('click', playPunchAnimation);
+        resetBtn.addEventListener('click', resetCounter);
+
+        // 键盘快捷键支持
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                playPunchAnimation();
+            } else if (e.code === 'KeyR' && e.ctrlKey) {
+                e.preventDefault();
+                resetCounter();
+            }
+        });
+
+        // 页面加载完成后的欢迎动画
+        window.addEventListener('load', () => {
+            ceo.style.animation = 'bounce 1s ease-in-out';
+            setTimeout(() => {
+                ceo.style.animation = '';
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
